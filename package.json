@@ -1,0 +1,33 @@
+{
+  "name": "hrm_cloud_based-management_system",
+  "version": "1.0.0",
+  "description": "This is a cloud based attendance management system that helps a Human Resource manager keep track of employee attendance and give or deny leave",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/G-RIMA/HRM_cloud_based-management_system.git"
+  },
+  "author": "GAMAL",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/G-RIMA/HRM_cloud_based-management_system/issues"
+  },
+  "homepage": "https://github.com/G-RIMA/HRM_cloud_based-management_system#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.1",
+    "mysql2": "^3.5.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.22"
+  }
+}
