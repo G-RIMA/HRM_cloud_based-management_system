@@ -10,12 +10,14 @@ router.post('/database', (req, res) => {
     password: '10081997',
   });
 
-  // Create the database
-  //connection.query('CREATE DATABASE attendance_system', (err) => {
-    //if (err) {
-      //console.error('Error creating the database:', err);
-      //return res.status(500).json({ error: 'Error creating the database' });
-    //}
+  //Create the database
+  connection.query('CREATE DATABASE attendance_system', (err) => {
+    if (err) {
+      console.error('Error creating the database:', err);
+      return res.status(500).json({ error: 'Error creating the database' });
+    }
+
+  });
 
     //check if database is created
     connection.query('SHOW DATABASES LIKE "attendance_system"', (error, results) => {
