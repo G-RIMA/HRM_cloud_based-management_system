@@ -11,7 +11,7 @@ router.post('/database', (req, res) => {
   });
 
   //Create the database
-  connection.query('CREATE DATABASE attendance_system', (err) => {
+  connection.query('CREATE DATABASE IF NOT EXISTS attendance_system', (err) => {
     if (err) {
       console.error('Error creating the database:', err);
       return res.status(500).json({ error: 'Error creating the database' });
