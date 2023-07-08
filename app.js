@@ -1,27 +1,16 @@
 const express = require('express');
 const app = express();
-const database = require('./routes/database')
 
-// Import and configure necessary middleware
-app.use(express.json()); 
+const databaseRouter = require('./routes/database');
 
-// Parse JSON request bodies
-// Add other middleware as needed
 app.get('/', (req, res) => {
-    res.send('Working!');
+  res.send('Hello, world!');
 });
 
-//Routes
-app.use(database);
+//routes
+app.use(databaseRouter);
 
-
-// Use routes as middleware
-
-// Start the server
-const port = process.env.PORT || 3001; // Use the provided port or default to 3000
+const port = process.env.PORT || 3000; // Use the provided port or default to 3000
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
-
-
-
