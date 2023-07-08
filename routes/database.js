@@ -34,6 +34,18 @@ router.post('/database', (req, res) => {
     
       connection.end();
     });
+    
+    // Create Table for Employees
+    connection.query(createTableQuery, (error, results) => {
+      if (error) {
+        console.error('Error creating table:', error);
+      } else {
+        console.log('Table created successfully');
+      }
+      connection.end(); // Close the MySQL connection
+    });
+    
 });
+
 
 module.exports = router;

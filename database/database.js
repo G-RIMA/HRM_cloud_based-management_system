@@ -10,5 +10,6 @@ const connection = mysql.createConnection({
   database: 'attendance_system',
 });
 
+
 // Export the connection object
 module.exports = connection;
