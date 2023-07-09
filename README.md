@@ -52,3 +52,39 @@ npm install mocha chai --save-dev
 ```
 
 Then create a test directory that will store the test files.
+
+
+### FRONTEND:
+For the frontend we will use REACT.
+To Install the dependancies we use:
+```
+npm create vite@latest
+
+```
+This created a VIte and React application
+We then go into the frontend folder and install the dependancies:
+```
+cd frontend
+npm install
+npm run dev
+```
+This confirms our frontend works just fine.
+
+
+## IMPLEMENTING THE BACKEND LOGIC
+
+### CREATING THE DATABASE AND THE TABLES REQUIRED
+We have already set up our backend development so now we set up our database and connected it to our backend
+For this we created this files and folders:
+#### database folder(contains files that creates the connection object for the database and exports it)
+ -  database.js 
+ -  createTable.js
+ - altertable.js
+
+#### routes folder (contains routes that connects with the app.js and helps in creating the database, tables and make changes to them)
+- alterTable.js
+- createTable.js
+- database.js
+
+And with this code we have created the necessary tables for the attendance system and given them roles
+
