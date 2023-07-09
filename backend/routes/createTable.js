@@ -9,6 +9,7 @@ router.post('/createTable', (req, res) => {
     user: 'root',
     password: '10081997',
     database: 'attendance_system',
+    //allows the execution of multiple queries
     multipleStatements: true
   });
 
