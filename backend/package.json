@@ -2,7 +2,7 @@
   "name": "hrm_cloud_based-management_system",
   "version": "1.0.0",
   "description": "This is a cloud based attendance management system that helps a Human Resource manager keep track of employee attendance and give or deny leave",
-  "main": "app.js",
+  "main": "nodemon app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
