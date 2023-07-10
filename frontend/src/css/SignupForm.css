@@ -1,0 +1,70 @@
+
+  .form-group {
+    margin-bottom: 15px;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #d1cdcd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 50%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  button[type="submit"] {
+    background-color: rgb(11, 151, 161);
+    color: #fff;
+    padding: 10px 20px;
+    margin: auto;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: rgb(45, 216, 216) ;
+  }
+
+  select {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+
+  }
+
+  select option {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  select option :hover{
+    background-color: rgb(45, 216, 216);
+}
+
+  button[type="button"] {
+    background-color: rgb(11, 151, 161);
+    color: #fff;
+    padding: 10px 20px;
+    margin: auto;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  button[type="button"] :hover {
+    background-color: rgb(45, 216, 216);
+  }
+  

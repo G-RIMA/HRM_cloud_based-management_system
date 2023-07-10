@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "../css/SignupForm.css";
 
 const SignupForm = () => {
     const [firstName, setFirstName] = useState('');
@@ -18,16 +19,18 @@ const SignupForm = () => {
     };
 
     const handleAddOrganization = () => {
-        setOrganizationForms((prevForms) => [...prevForms, { id: Date.now() }]);
+        setOrganizationForms((prevForms) => [{ id: Date.now() }, ...prevForms]);
       };
     
   
     return (
-    
-    <form onSubmit={handleSubmit}>
+    <div>
+        <form 
+    class='form-group' 
+    onSubmit={handleSubmit}>
       <label>First Name:</label>
       <input
-        type="firstName"
+        type="text"
         value={firstName}
         onChange={(e) => setFirstName(e.target.value)}
         required
@@ -35,7 +38,7 @@ const SignupForm = () => {
       
       <label>Last Name:</label>
       <input
-        type="lastName"
+        type="text"
         value={lastName}
         onChange={(e) => setLastName(e.target.value)}
         required
@@ -113,21 +116,28 @@ const SignupForm = () => {
             onChange={(e) => setOrganization(e.target.value)}
             required
           />
-          <button type="button" onClick={handleAddOrganization} >
+          <div style={{ marginTop: '1rem' }}>
+            <button type="button" onClick={handleAddOrganization} >
             Add Organisation</button>
             {organizationForms.map((form) => (
                 <div key={form.id}>
                   <label>Organization Name:</label>
                   <input type="text" required />
+                  <label>Organization type:</label>
+                  <input type="text" required />
                 </div>
             ))}
+          </div>
         </>
         )}
       </>
       )}
-
-      <button type="submit">Signup</button>
+      
+      <div style={{ marginTop: '1rem' }}>
+        <button type="submit">Signup</button>
+      </div>
     </form>
+   </div>
   );
 };
 
