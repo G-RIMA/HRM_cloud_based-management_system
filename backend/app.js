@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
 app.use(databaseRouter);
 app.use(tableRouter);
 app.use(alterRouter);
+app.use(signupRouter);
 
 
 
