@@ -1,32 +1,33 @@
-// Import required modules
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
 const mysql = require('mysql2');
-const db = require('../database/database'); // Import your database connection object
 
-// Define the HR or Director signup route
+const dotenv = require("dotenv")
+const bcrypt = require("bcrypt")
+
+
+
+dotenv.config();
+
+const DB_HOST = process.env.DB_HOST
+const DB_USER = process.env.DB_USER
+const DB_PASSWORD = process.env.DB_PASSWORD
+const DB_DATABASE = process.env.DB_DATABASE
+
+
 router.post('/signup', (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+    // Create the connection
+    const connection = mysql.createPool({
+        host: DB_HOST,
+        user: DB_USER,
+        password: DB_PASSWORD,
+        database: DB_DATABASE,
+        //allows the execution of multiple queries
+        multipleStatements: true
+    });
 
-  // Validate the input data (you can implement your own validation logic here)
+    
 
-  // Hash the password
-  const hashedPassword = bcrypt.hashSync(password, 10);
-
-  // Create a new HR or Director record in the database
-  const createUserQuery = `INSERT INTO hr (first_name, last_name, email, password) VALUES (?, ?, ?, ?)`;
-  const values = [firstName, lastName, email, hashedPassword];
-
-  db.query(createUserQuery, values, (error, results) => {
-    if (error) {
-      console.error('Error creating HR or Director:', error);
-      return res.status(500).json({ error: 'Error creating HR or Director' });
-    }
-
-    // Return a success response
-    return res.status(200).json({ message: 'HR created successfully' });
-  });
-});
+})
 
 module.exports = router;

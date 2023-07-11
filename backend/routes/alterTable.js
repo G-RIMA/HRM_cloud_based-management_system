@@ -2,22 +2,29 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql2');
 
+const dotenv = require("dotenv")
+
+dotenv.config();
+
+const DB_HOST = process.env.DB_HOST
+const DB_USER = process.env.DB_USER
+const DB_PASSWORD = process.env.DB_PASSWORD
+const DB_DATABASE = process.env.DB_DATABASE
+
+
 router.post('/alterTable', (req, res) => {
   // Create the connection
   const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '10081997',
-    database: 'attendance_system',
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_DATABASE,
     //allows the execution of multiple queries
     multipleStatements: true
   });
 
   const alterTableQuery = `
-  ALTER TABLE hr
-  ADD COLUMN hr_type VARCHAR(50) NOT NULL;
-  ALTER TABLE organizations
-  ADD COLUMN organisation_type VARCHAR(50) NOT NULL;
+  DROP TABLE test ;
   `;
 
 
