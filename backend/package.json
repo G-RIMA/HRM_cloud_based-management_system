@@ -4,6 +4,7 @@
   "description": "This is a cloud based attendance management system that helps a Human Resource manager keep track of employee attendance and give or deny leave",
   "main": "app.js",
   "scripts": {
+    "devStart": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

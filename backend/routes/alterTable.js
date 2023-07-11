@@ -14,8 +14,10 @@ router.post('/alterTable', (req, res) => {
   });
 
   const alterTableQuery = `
-  ALTER TABLE director
-  ADD COLUMN password VARCHAR(100) NOT NULL;
+  ALTER TABLE hr
+  ADD COLUMN hr_type VARCHAR(50) NOT NULL;
+  ALTER TABLE organizations
+  ADD COLUMN organisation_type VARCHAR(50) NOT NULL;
   `;
 
 

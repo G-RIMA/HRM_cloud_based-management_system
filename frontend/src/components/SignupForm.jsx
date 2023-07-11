@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import "../css/SignupForm.css";
+import { Link } from 'react-router-dom';
+
 
 const SignupForm = () => {
     const [firstName, setFirstName] = useState('');
@@ -12,11 +14,9 @@ const SignupForm = () => {
     const [organizationForms, setOrganizationForms] = useState([]);
 
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-    // Perform form validation and API request
-    // Use the form data (email, password, role, organization) to send the signup request to the backend API
-    };
+    const handleSubmit = async (e) => {
+      
+  };
 
     const handleAddOrganization = () => {
         setOrganizationForms((prevForms) => [{ id: Date.now() }, ...prevForms]);
@@ -76,6 +76,34 @@ const SignupForm = () => {
             onChange={(e) => setOrganization(e.target.value)}
             required
           />
+          <label>Organisation type:</label>
+          <input
+            type="text"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            required
+          />
+          <label>Organisation address:</label>
+          <input
+            type="text"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            required
+          />
+          <label>Organisation contact:</label>
+          <input
+            type="text"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            required
+          />
+          <label>Organisation email:</label>
+          <input
+            type="email"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            required
+          />
         </>
         
       )}
@@ -116,15 +144,55 @@ const SignupForm = () => {
             onChange={(e) => setOrganization(e.target.value)}
             required
           />
+          <label>Organisation address:</label>
+          <input
+            type="text"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            required
+          />
+          <label>Organisation contact:</label>
+          <input
+            type="text"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            required
+          />
+          <label>Organisation email:</label>
+          <input
+            type="email"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            required
+          />
           <div style={{ marginTop: '1rem' }}>
             <button type="button" onClick={handleAddOrganization} >
             Add Organisation</button>
             {organizationForms.map((form) => (
                 <div key={form.id}>
                   <label>Organization Name:</label>
-                  <input type="text" required />
+                  <input type="text" 
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)} 
+                  required />
                   <label>Organization type:</label>
-                  <input type="text" required />
+                  <input type="text" 
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)} required />
+                  <label>Address:</label>
+                  <input type="text" 
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)} required />
+                  <label>Organization contact:</label>
+                  <input type="text" 
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)} required />
+                  <label>Organisation Email:</label>
+                  <input type="email" 
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)}
+                  required />
+
                 </div>
             ))}
           </div>
@@ -136,6 +204,12 @@ const SignupForm = () => {
       <div style={{ marginTop: '1rem' }}>
         <button type="submit">Signup</button>
       </div>
+      
+      <p>Already have an account</p>
+      <div style={{ marginTop: '1rem' }}>
+        <Link to='/login' class='Link' type="submit">Log In</Link>
+      </div>
+
     </form>
    </div>
   );
