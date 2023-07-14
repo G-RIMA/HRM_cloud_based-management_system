@@ -1,33 +1,45 @@
-const Hr = require("../models/users.model.js");
+const Hr = require("../models/hr.model.js");
+const bcrypt = require("bcrypt");
 
 // Create and Save a new Hr
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+    return;
+  }
+
+  // Generate a salt and hash the password
+  bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+    if (err) {
+      res.status(500).send({
+        message: "Error occurred while hashing the password"
+      });
+      return;
     }
 
     // Create a Hr
     const hr = new Hr({
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        password: req.body.password,
-        hr_type: req.body.hr_type
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      email: req.body.email,
+      password: hashedPassword,
+      hr_type: req.body.hr_type
     });
 
     Hr.create(hr, (err, data) => {
-        if (err)
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while creating a new Hr."
-          });
-        else res.send(data);
-    });
+      if (err) {
+        res.status(500).send({
+          message: err.message || "Some error occurred while creating a new Hr."
+        });
+        return;
+      }
 
-  
+      res.send(data);
+    });
+  });
 };
 
 // Retrieve all Hr from the database (with condition).
