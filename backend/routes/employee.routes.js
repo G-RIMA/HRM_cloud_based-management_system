@@ -3,19 +3,19 @@ const employee = require('../controllers/employess.controller');
 
 const router = express.Router();
 
-// Create a new hr user
+// Create a new  user
 router.post("/", employee.create);
 
-// Retrieve all hr users
+// Retrieve all  users
 router.get("/", employee.findAll);
 
-// Retrieve a single hr with id
+// Retrieve a single user with id
 router.get("/:first_name", employee.findOne);
 
-// Update a hr with id
+// Update a user with id
 router.put("/:id", employee.update);
 
-// Delete a hr with id
+// Delete a user with id
 router.delete("/:id", employee.deleteEmployee);
 
 module.exports = (app) => {

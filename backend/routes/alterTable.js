@@ -24,7 +24,8 @@ router.post('/alterTable', (req, res) => {
   });
 
   const alterTableQuery = `
-  DROP TABLE test ;
+  ALTER TABLE organizations
+  DROP COLUMN organisation_type;
   `;
 
 

@@ -27,6 +27,7 @@ const signupRouter = require('./routes/SignupForm');
 const hrRouter = require ("./routes/hr.routes");
 const employeeRouter = require("./routes/employee.routes");
 const directorRouter = require("./routes/directors.model");
+const orgRouter = require("./routes/org.routes");
 
 //simple route
 app.get('/', (req, res) => {
@@ -41,7 +42,7 @@ app.use(signupRouter);
 hrRouter(app);
 employeeRouter(app);
 directorRouter(app);
-
+orgRouter(app);
 
 
 const port = process.env.PORT // Use the provided port or default to 3000
