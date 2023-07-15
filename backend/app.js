@@ -25,6 +25,7 @@ const tableRouter = require('./routes/createTable');
 const alterRouter = require('./routes/alterTable');
 const signupRouter = require('./routes/SignupForm');
 const hrRouter = require ("./routes/hr.routes");
+const employeeRouter = require("./routes/employee.routes")
 
 //simple route
 app.get('/', (req, res) => {
@@ -37,6 +38,7 @@ app.use(tableRouter);
 app.use(alterRouter);
 app.use(signupRouter);
 hrRouter(app);
+employeeRouter(app);
 
 
 
