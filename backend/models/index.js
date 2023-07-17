@@ -22,5 +22,10 @@ db.hr = require("./hr.model.js")(sequelize, Sequelize);
 db.director = require("./directors.model.js")(sequelize, Sequelize);
 db.employee = require("./employee.model.js")(sequelize, Sequelize);
 db.org = require("./org.model.js")(sequelize, Sequelize);
+db.attendance = require("./attendance.model.js")(sequelize, Sequelize);
+db.leave = require("./leave.model.js")(sequelize, Sequelize);
+db.department = require("./department.model.js")(sequelize, Sequelize);
+db.job_title = require("./job_title.model.js")(sequelize, Sequelize);
+
 
 module.exports = db;

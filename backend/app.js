@@ -25,6 +25,7 @@ const hrRouter = require ("./routes/hr.routes");
 const employeeRouter = require("./routes/employee.routes");
 const directorRouter = require("./routes/directors.routes");
 const orgRouter = require("./routes/org.routes");
+const attendanceRouter = require("./routes/attendace.routes")
 
 
 
@@ -41,6 +42,7 @@ hrRouter(app);
 employeeRouter(app);
 directorRouter(app);
 orgRouter(app);
+attendanceRouter(app);
 
 
 const port = process.env.PORT // Use the provided port or default to 3000
