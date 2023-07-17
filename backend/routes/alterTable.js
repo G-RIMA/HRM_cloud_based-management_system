@@ -24,8 +24,13 @@ router.post('/alterTable', (req, res) => {
   });
 
   const alterTableQuery = `
-  ALTER TABLE organizations
-  DROP COLUMN organisation_type;
+  CREATE TABLE IF NOT EXIST company (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+  )
+
+
+  
   `;
 
 

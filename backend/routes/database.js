@@ -1,49 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql2');
+const { Sequelize } = require('sequelize');
+require('dotenv').config(); // Load environment variables from .env file
 
-const dotenv = require("dotenv")
-
-dotenv.config();
-
-const DB_HOST = process.env.DB_HOST
-const DB_USER = process.env.DB_USER
-const DB_PASSWORD = process.env.DB_PASSWORD
-
-router.post('/database', (req, res) => {
-  // Create the database connection
-  const connection = mysql.createConnection({
-    host: DB_HOST,
-    user: DB_USER,
-    password: DB_PASSWORD,
-  });
-
-  //Create the database
-  connection.query('CREATE DATABASE IF NOT EXISTS attendance_system', (err) => {
-    if (err) {
-      console.error('Error creating the database:', err);
-      return res.status(500).json({ error: 'Error creating the database' });
-    }
-
-  });
-
-    //check if database is created
-    connection.query('SHOW DATABASES LIKE "attendance_system"', (error, results) => {
-      if (error) {
-        console.error('Error checking database:', error);
-        return;
-      }
-    
-      if (results.length > 0) {
-        console.log('Database exists');
-      } else {
-        console.log('Database does not exist');
-      }
-    
-      connection.end();
-    });
-    
+// Create a new Sequelize instance with the environment variables
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: 'mysql',
 });
 
+// Test the database connection
+async function testConnection(req, res, next) {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection to the database has been established successfully.');
+    res.status(200).send('Connection to the database has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+    res.status(500).send('Unable to connect to the database.');
+  }
+}
+
+router.get('/test-connection', testConnection);
 
 module.exports = router;
+

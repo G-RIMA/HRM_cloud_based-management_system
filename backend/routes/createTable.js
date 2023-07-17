@@ -28,8 +28,12 @@ router.post('/createTable', (req, res) => {
       id INT AUTO_INCREMENT PRIMARY KEY,
       first_name VARCHAR(50) NOT NULL,
       last_name VARCHAR(50) NOT NULL,
+      password VARCHAR(250) NOT NULL,
       email VARCHAR(100) NOT NULL,
+      hr_type VARCHAR(100) NULL,
       role ENUM('admin', 'user') DEFAULT 'admin'
+      FOREIGN KEY (organizations_id) REFERENCES organizations(id),
+      FOREIGN KEY (department_id) REFERENCES departments(id),
     );
 
     CREATE TABLE IF NOT EXISTS director (
@@ -37,6 +41,7 @@ router.post('/createTable', (req, res) => {
       first_name VARCHAR(50) NOT NULL,
       last_name VARCHAR(50) NOT NULL,
       email VARCHAR(100) NOT NULL,
+      password VARCHAR(250) NOT NULL,
       role ENUM('admin', 'user') DEFAULT 'admin'
     );
   `;
@@ -69,6 +74,7 @@ router.post('/createTable', (req, res) => {
       first_name VARCHAR(50) NOT NULL,
       last_name VARCHAR(50) NOT NULL,
       email VARCHAR(100) NOT NULL,
+      password VARCHAR(250) NOT NULL,
       role ENUM('admin', 'user') DEFAULT 'user',
       department_id INT,
       job_title_id INT,

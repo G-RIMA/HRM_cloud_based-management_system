@@ -29,6 +29,8 @@ const employeeRouter = require("./routes/employee.routes");
 const directorRouter = require("./routes/directors.model");
 const orgRouter = require("./routes/org.routes");
 
+
+
 //simple route
 app.get('/', (req, res) => {
   res.send('Server is working');
@@ -48,4 +50,11 @@ orgRouter(app);
 const port = process.env.PORT // Use the provided port or default to 3000
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
+});
+const db = require("./models");
+db.sequelize.sync();
+
+// if we need to drop tables
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db.");
 });
