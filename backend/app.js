@@ -35,6 +35,8 @@ app.get('/', (req, res) => {
 
 //routes
 app.use(databaseRouter);
+// if we need to drop tables
+
 hrRouter(app);
 employeeRouter(app);
 directorRouter(app);
