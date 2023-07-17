@@ -1,7 +1,9 @@
-const Director = require("../models/directors.model");
-const bcrypt = require("bcrypt");
+const db = require("../models");
+const Director = db.director;
+const Op = db.Sequelize.Op;
 
-// Create and Save a new Director
+
+// Create Directoe
 exports.create = (req, res) => {
     // Validate request
   if (!req.body) {
@@ -10,129 +12,111 @@ exports.create = (req, res) => {
     });
     return;
   }
+  // Create a Director
+  const director = ({
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: req.body.password,
+    position: req.body.position,
+    wage: req.body.wage
+  });
 
-  // Generate a salt and hash the password
-  bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-    if (err) {
-      res.status(500).send({
-        message: "Error occurred while hashing the password"
-      });
-      return;
-    }
+  Director.create(director).then(data => {
+    res.send(data);
 
-    // Create a Director
-    const director = new Director({
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      email: req.body.email,
-      password: hashedPassword,
-    });
-
-    Director.create(director, (err, data) => {
-      if (err) {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creating a new Director."
-        });
-        return;
-      }
-
-      res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "Some error occured!"
     });
   });
-};
 
-// Retrieve all director from the database (with condition).
+}
+
+// Retrieve all Director from the database (with condition).
 exports.findAll = (req, res) => {
-   const first_name = req.query.first_name;
+  const first_name = req.query.first_name;
+  let condition = first_name ? { first_name: {[Op.like]: `%${first_name}%`}}: null;
 
-   Director.getAll(first_name, (err, data) => {
-    if (err) {
-        res.status(500).send({
-            message: err.message || "Some error occured while retrieving Director "
-        }); 
-    } else {
-        res.send(data);
-    }
+
+   Director.findAll({where: condition}).then (data => {
+    res.send(data);
+   }). catch (err => {
+    res.status(500).send({
+      message: err.message || "Some error Occured!"
+    });
    });
    
 };
 
-// Find a single director with a id
+// Find a single Director with a id
 exports.findOne = (req, res) => {
-    Director.findById(req.params.first_name, (err, data) => {
-        if(err) {
-            if(err.kind === "not found") {
-                res.status(404).send({
-                    message: `Not found that Director with name ${req.params.first_name}.`
-                });
-            } else {
-                res.status(500).send({
-                    message: "Error retrieving Director with " + req.params.first_name
+  const id = req.params.id;
 
-                });
-            }
-        } else {
-            res.send(data);
-        }
-    });
-};
-
-// Update a director identified by the id in the request
-exports.update = (req, res) => {
-    // Validate request
-    if (!req.body) {
-        res.status(400).send({
-            message: "Content can't be empty!"
+  Director.findByPk(id).then(data => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Director with id=${id}.`
         });
-    }
-    
-    const director = req.body;
-    const id = req.params.id;
-    
-    Director.updateById(id, director, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                res.status(404).send({
-                    message: `Not found with id ${id}.`
-                });
-            } else if (err.kind === "bad_request") {
-                res.status(400).send({
-                    message: "No valid fields provided for update."
-                });
-            } else {
-                res.status(500).send({
-                    message: "Error updating user with id " + id
-                });
-            }
-        } else {
-            res.send(data);
-        }
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving Director with id=" + id
+      });
+    }); 
+};
+
+// Update a Director identified by the id in the request
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  Director.update(req.body, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Director was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Director with id=${id}. Maybe Director was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Director with id=" + id
+      });
     });
 };
 
 
-// Delete a director with the specified id in the request
+// Delete a HR with the specified id in the request
 exports.deleteDirector = (req, res) => {
-    const id = req.params.id;
-    
-    Director.remove(id, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                res.status(404).json({
-                    message: `Director not found with id ${id}.`,
-                });
-            } else {
-                res.status(500).json({
-                    message: `Error deleting Director with id ${id}.`,
-                    error: err.message,
-                });
-            }
-        } else {
-            res.json({
-                message: `Director deleted successfully.`,
-                data: data,
-            });
-        }
+  const id = req.params.id;
+
+  Director.destroy({
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Hr was deleted successfully!"
+        });
+      } else {
+        res.send({
+          message: `Cannot delete Hr with id=${id}. Maybe Tutorial was not found!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete Hr with id=" + id
+      });
     });
-  
 };

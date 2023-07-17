@@ -21,12 +21,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const databaseRouter = require('./routes/database');
-const tableRouter = require('./routes/createTable');
-const alterRouter = require('./routes/alterTable');
-const signupRouter = require('./routes/SignupForm');
 const hrRouter = require ("./routes/hr.routes");
 const employeeRouter = require("./routes/employee.routes");
-const directorRouter = require("./routes/directors.model");
+const directorRouter = require("./routes/directors.routes");
 const orgRouter = require("./routes/org.routes");
 
 
@@ -38,9 +35,6 @@ app.get('/', (req, res) => {
 
 //routes
 app.use(databaseRouter);
-app.use(tableRouter);
-app.use(alterRouter);
-app.use(signupRouter);
 hrRouter(app);
 employeeRouter(app);
 directorRouter(app);

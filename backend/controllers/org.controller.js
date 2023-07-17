@@ -1,6 +1,9 @@
-const Org = require("../models/org.model");
+const db = require("../models");
+const Org = db.org;
+const Op = db.Sequelize.Op;
 
-// Create and Save a new org
+
+// Create org
 exports.create = (req, res) => {
     // Validate request
   if (!req.body) {
@@ -9,118 +12,111 @@ exports.create = (req, res) => {
     });
     return;
   }
-    // Create an org
-    const org = new Org({
-      name: req.body.name,
-      address: req.body.address,
-      email: req.body.email,
-      contact_number: req.body.contact_number,
-    });
+  // Create a Org
+  const org = ({
+    org_name: req.body.org_name,
+    address: req.body.address,
+    email: req.body.email,
+    contact: req.body.contact,
+    website: req.body.website,
+    
+  });
 
-    Org.create(org, (err, data) => {
-      if (err) {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creating a new Org."
-        });
-        return;
-      }
+  Org.create(org).then(data => {
+    res.send(data);
 
-      res.send(data);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "Some error occured!"
     });
-};
+  });
+
+}
 
 // Retrieve all Org from the database (with condition).
 exports.findAll = (req, res) => {
-   const name = req.query.name;
-   Org.getAll(name, (err, data) => {
-    if (err) {
-        res.status(500).send({
-            message: err.message || "Some error occured while retrieving organisation "
-        }); 
-    } else {
-        res.send(data);
-    }
+  const first_name = req.query.first_name;
+  let condition = first_name ? { first_name: {[Op.like]: `%${first_name}%`}}: null;
+
+
+   Org.findAll({where: condition}).then (data => {
+    res.send(data);
+   }). catch (err => {
+    res.status(500).send({
+      message: err.message || "Some error Occured!"
+    });
    });
    
 };
 
-// Find a single org with a id
+// Find a single Org with a id
 exports.findOne = (req, res) => {
-    Org.findById(req.params.name, (err, data) => {
-        if(err) {
-            if(err.kind === "not found") {
-                res.status(404).send({
-                    message: `Not found that Org with name ${req.params.name}.`
-                });
-            } else {
-                res.status(500).send({
-                    message: "Error retrieving org with " + req.params.name
+  const id = req.params.id;
 
-                });
-            }
-        } else {
-            res.send(data);
-        }
-    });
-
-};
-
-// Update a org identified by the id in the request
-exports.update = (req, res) => {
-    // Validate request
-    if (!req.body) {
-        res.status(400).send({
-            message: "Content can't be empty!"
+  Org.findByPk(id).then(data => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Organisation with id=${id}.`
         });
-    }
-    
-    const org = req.body;
-    const id = req.params.id;
-    
-    Org.updateById(id, org, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                res.status(404).send({
-                    message: `Not found with id ${id}.`
-                });
-            } else if (err.kind === "bad_request") {
-                res.status(400).send({
-                    message: "No valid fields provided for update."
-                });
-            } else {
-                res.status(500).send({
-                    message: "Error updating org user with id " + id
-                });
-            }
-        } else {
-            res.send(data);
-        }
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving Organisation with id=" + id
+      });
+    }); 
+};
+
+// Update a Org identified by the id in the request
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  Org.update(req.body, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Org was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Org with id=${id}. Maybe Org was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Org with id=" + id
+      });
     });
 };
 
 
-// Delete a org with the specified id in the request
+// Delete a Org with the specified id in the request
 exports.deleteOrg = (req, res) => {
-    const id = req.params.id;
-    
-    Org.remove(id, (err, data) => {
-        if (err) {
-            if (err.kind === "not_found") {
-                res.status(404).json({
-                    message: `Org not found with id ${id}.`,
-                });
-            } else {
-                res.status(500).json({
-                    message: `Error deleting org with id ${id}.`,
-                    error: err.message,
-                });
-            }
-        } else {
-            res.json({
-                message: `org deleted successfully.`,
-                data: data,
-            });
-        }
+  const id = req.params.id;
+
+  Org.destroy({
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: " Org was deleted successfully!"
+        });
+      } else {
+        res.send({
+          message: `Cannot delete Org with id=${id}. Maybe Tutorial was not found!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete Org with id=" + id
+      });
     });
-  
 };

@@ -1,9 +1,9 @@
 const db = require("../models");
-const Hr = db.hr;
+const Employee = db.employee;
 const Op = db.Sequelize.Op;
 
 
-// Create HR
+// Create Emp
 exports.create = (req, res) => {
     // Validate request
   if (!req.body) {
@@ -12,18 +12,18 @@ exports.create = (req, res) => {
     });
     return;
   }
-  // Create a Hr
-  const hr = ({
+  // Create a Employee
+  const employee = ({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
     password: req.body.password,
-    hr_type: req.body.hr_type,
+    employee_type: req.body.employee_type,
     position: req.body.position,
     wage: req.body.wage
   });
 
-  Hr.create(hr).then(data => {
+  Employee.create(employee).then(data => {
     res.send(data);
 
   })
@@ -35,13 +35,13 @@ exports.create = (req, res) => {
 
 }
 
-// Retrieve all Hr from the database (with condition).
+// Retrieve all emp from the database (with condition).
 exports.findAll = (req, res) => {
   const first_name = req.query.first_name;
   let condition = first_name ? { first_name: {[Op.like]: `%${first_name}%`}}: null;
 
 
-   Hr.findAll({where: condition}).then (data => {
+   Employee.findAll({where: condition}).then (data => {
     res.send(data);
    }). catch (err => {
     res.status(500).send({
@@ -51,74 +51,73 @@ exports.findAll = (req, res) => {
    
 };
 
-// Find a single Hr with a id
+// Find a single emp with a id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Hr.findByPk(id).then(data => {
+  Employee.findByPk(id).then(data => {
       if (data) {
         res.send(data);
       } else {
         res.status(404).send({
-          message: `Cannot find Hr with id=${id}.`
+          message: `Cannot find Employee with id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving Hr with id=" + id
+        message: "Error retrieving Employee with id=" + id
       });
     }); 
 };
 
-// Update a HR identified by the id in the request
+// Update a emp identified by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  Hr.update(req.body, {
+  Employee.update(req.body, {
     where: { id: id }
   })
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "Hr was updated successfully."
+          message: "Employee was updated successfully."
         });
       } else {
         res.send({
-          message: `Cannot update HR with id=${id}. Maybe Hr was not found or req.body is empty!`
+          message: `Cannot update Employee with id=${id}. Maybe Employee was not found or req.body is empty!`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating Hr with id=" + id
+        message: "Error updating Employee with id=" + id
       });
     });
 };
 
 
-// Delete a HR with the specified id in the request
-exports.deleteHr = (req, res) => {
+// Delete a employee with the specified id in the request
+exports.deleteEmployee = (req, res) => {
   const id = req.params.id;
 
-  Hr.destroy({
+  Employee.destroy({
     where: { id: id }
   })
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "Hr was deleted successfully!"
+          message: "Employee was deleted successfully!"
         });
       } else {
         res.send({
-          message: `Cannot delete Hr with id=${id}. Maybe Tutorial was not found!`
+          message: `Cannot delete Employee with id=${id}. Maybe Tutorial was not found!`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete Hr with id=" + id
+        message: "Could not delete EMployee with id=" + id
       });
     });
 };
-
