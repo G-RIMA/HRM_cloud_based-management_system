@@ -4,6 +4,7 @@ const app = express();
 const dotenv = require("dotenv")
 const cors = require("cors");
 
+
 //cors provides Express middleware to enable CORS with various options.
 var corsOptions = {
   origin: "https://localhost:3000"
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
   res.send('Server is working');
 });
 
+
 //routes
 app.use(databaseRouter);
 
@@ -44,12 +46,16 @@ orgRouter(app);
 attendanceRouter(app);
 
 
+
+
 const port = process.env.PORT // Use the provided port or default to 3000
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
 const db = require("./models");
+
+
 db.sequelize.sync();
 
 // if we need to drop tables
@@ -61,3 +67,4 @@ db.sequelize.sync()
   .catch(error => {
     console.error("Error while synchronizing db:", error);
   });
+

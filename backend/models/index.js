@@ -27,6 +27,7 @@ db.leave = require("./leave.model.js")(sequelize, Sequelize);
 db.department = require("./department.model.js")(sequelize, Sequelize);
 db.job_title = require("./job_title.model.js")(sequelize, Sequelize);
 
+
 // employee relationships
 
 //employee belongs to one organisation 
