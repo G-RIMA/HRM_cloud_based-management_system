@@ -53,6 +53,11 @@ const db = require("./models");
 db.sequelize.sync();
 
 // if we need to drop tables
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
-});
+
+db.sequelize.sync()
+  .then(() => {
+    console.log("Synchronized db.");
+  })
+  .catch(error => {
+    console.error("Error while synchronizing db:", error);
+  });

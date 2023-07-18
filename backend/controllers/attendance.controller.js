@@ -19,6 +19,8 @@ exports.create = (req, res) => {
         check_out: req.body.check_out,
         lunch_check_in: req.body.lunch_check_in,
         lunch_check_out: req.body.lunch_check_out,
+        employeeId: req.body.employeeId,
+        hrId: req.body.hrId,
     };
     
     // Save the attendance record in the database
