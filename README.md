@@ -213,8 +213,7 @@ db.org.hasMany(db.employee, {
 // other relationships in the code
 ```
 
-Now our database is complete
+Now our database is complete.
 
 
-Now o
 
