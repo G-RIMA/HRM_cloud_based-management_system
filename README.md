@@ -60,7 +60,7 @@ npm install sequalize
 Then create a test directory that will store the test files.
 
 
-### FRONTEND:
+### Frontend:
 For the frontend we will use REACT.
 To Install the dependancies we use:
 ```
