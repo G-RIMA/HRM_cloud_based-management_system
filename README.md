@@ -30,6 +30,8 @@ A middleware for enabling Cross-Origin Resource Sharing (CORS) in your applicati
 
 8. nodemon (development dependency)
 A tool that automatically restarts the Node.js server whenever changes are detected, improving the development workflow.
+9. sequalize
+Sequelize is a modern TypeScript and Node.js ORM for Oracle, Postgres, MySQL, MariaDB, SQLite and SQL Server, and more. Featuring solid transaction support, relations, eager and lazy loading, read replication and more.
 
 We start by initializing npm:
 ```
@@ -49,6 +51,10 @@ To run tests for our Node.js application, we will use a testing framework like M
 To install the dependancies:
 ```
 npm install mocha chai --save-dev
+```
+Install Sequalize
+```
+npm install sequalize
 ```
 
 Then create a test directory that will store the test files.
@@ -73,18 +79,142 @@ This confirms our frontend works just fine.
 
 ## IMPLEMENTING THE BACKEND LOGIC
 
+### CREATING THE SERVER
+our server will be in app.js
+In this file:
+ * import express, and cors modules:
+   1. Express is for building the Rest apis
+   2. pcors provides Express middleware to enable CORS with various options.
+* create an Express app, then add body-parser (json and urlencoded) and cors middlewares using app.use() method. 
+* define a GET route which is simple for test.
+* listen on port 3000 for incoming requests.
+
+To run the server we use:
+```
+node app.js
+```
+or 
+In package.json, we change:
+```
+"scripts": {
+    "devStart":"nodemon app.js",
+}
+```
+This will allow us to run the server, and it will automatically detect the changes in the code, no need to restart it every time.
+```
+npm run devStart 
+```
+
 ### CREATING THE DATABASE AND THE TABLES REQUIRED
 We have already set up our backend development so now we set up our database and connected it to our backend
 For this we created this files and folders:
 #### database folder(contains files that creates the connection object for the database and exports it)
- -  database.js 
- -  createTable.js
- - altertable.js
+ -  db.config.js
+    we create a separate config folder for configuration
+    pool is optional, it will be used for Sequelize connection pool configuration:
+    + max: maximum number of connection in pool
+    + min: minimum number of connection in pool
+    + idle: maximum time, in milliseconds, that a connection can be idle before being released
+    + acquire: maximum time, in milliseconds, that pool will try to get connection before throwing error
+
+
+#### Initialize Sequelize in backend/models
+- index.js 
+
+
+#### Define the Sequelize models
+- attendance.model.js
+- department.model.js
+- directors.model.js
+- employee.model.js
+- hr.model.js
+- job_title.model.js
+- leave.model.js
+- org.model.js
+This creates all the tables we need for the system
+
+#### Create the controllers
+- attendance.controller.js
+- directors.controllers.js
+- employees.controllers.js
+- hr.controllers.js
+- leave.controller.js
+- org.controller.js
+This files controll all the crud functions we need, create, findone,find many and delete.
+
 
 #### routes folder (contains routes that connects with the app.js and helps in creating the database, tables and make changes to them)
-- alterTable.js
-- createTable.js
+- attendance.routes.js
 - database.js
+- directors.js
+- employee.routes.js
+- hr.routes.js
+- leave.routes.js
+- org.routes.js
 
-And with this code we have created the necessary tables for the attendance system and given them roles
+#### Then connect the routes with the server
+```
+const databaseRouter = require('./routes/database');
+const hrRouter = require ("./routes/hr.routes");
+const employeeRouter = require("./routes/employee.routes");
+const directorRouter = require("./routes/directors.routes");
+const orgRouter = require("./routes/org.routes");
+const attendanceRouter = require("./routes/attendace.routes")
+
+
+app.use(databaseRouter);
+
+hrRouter(app);
+employeeRouter(app);
+directorRouter(app);
+orgRouter(app);
+attendanceRouter(app);
+```
+
+Then sync
+```
+const db = require("./models");
+db.sequelize.sync();
+
+// if we need to drop tables
+
+db.sequelize.sync()
+  .then(() => {
+    console.log("Synchronized db.");
+  })
+  .catch(error => {
+    console.error("Error while synchronizing db:", error);
+  });
+
+
+```
+
+And with that we have created our tables, now to connect them with foreign keys:
+In our index.js we add this code:
+```
+//employee belongs to one organisation 
+db.employee.belongsTo(db.org, {
+  foreignKey: {
+    name: 'orgId', // Foreign key column in Employee table
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+});
+
+// many employees can be in one org
+db.org.hasMany(db.employee, {
+  foreignKey: {
+    name: 'orgId', // Foreign key column in Employee table
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+});
+
+// other relationships in the code
+```
+
+Now our database is complete
+
+
+Now o
 

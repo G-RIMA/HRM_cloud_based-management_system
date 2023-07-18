@@ -36,7 +36,6 @@ app.get('/', (req, res) => {
 
 //routes
 app.use(databaseRouter);
-// if we need to drop tables
 
 hrRouter(app);
 employeeRouter(app);
@@ -49,6 +48,7 @@ const port = process.env.PORT // Use the provided port or default to 3000
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
 const db = require("./models");
 db.sequelize.sync();
 
