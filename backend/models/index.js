@@ -26,6 +26,16 @@ db.attendance = require("./attendance.model.js")(sequelize, Sequelize);
 db.leave = require("./leave.model.js")(sequelize, Sequelize);
 db.department = require("./department.model.js")(sequelize, Sequelize);
 db.job_title = require("./job_title.model.js")(sequelize, Sequelize);
+//db.roles = require("../models/roles.model.js")(sequelize, Sequelize);
+
+//connect roles to employees
+//db.roles.belongsToMany(db.employee, {
+  //through: "employee_roles"
+//});
+//db.employee.belongsToMany(db.roles, {
+  //through: "employee_roles"
+//});
+
 
 
 // employee relationships
@@ -35,7 +45,7 @@ db.employee.belongsTo(db.org, {
   foreignKey: {
     name: 'orgId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -44,7 +54,7 @@ db.org.hasMany(db.employee, {
   foreignKey: {
     name: 'orgId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -53,7 +63,7 @@ db.employee.belongsTo(db.department, {
   foreignKey: {
     name: 'departmentId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -62,7 +72,7 @@ db.department.hasMany(db.employee, {
   foreignKey: {
     name: 'departmentId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -71,7 +81,7 @@ db.job_title.hasMany(db.employee, {
   foreignKey: {
     name: 'jobId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -80,7 +90,7 @@ db.employee.belongsTo(db.job_title, {
   foreignKey: {
     name: 'jobId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -89,7 +99,7 @@ db.employee.hasMany(db.attendance, {
   foreignKey: {
     name: 'employeeId', // Foreign key column in Attendance table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -98,7 +108,7 @@ db.employee.hasMany(db.leave, {
   foreignKey: {
     name: 'employeeId', // Foreign key column in Leave table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -107,7 +117,7 @@ db.leave.belongsTo(db.employee, {
   foreignKey: {
     name: 'employeeId', // Foreign key column in Leave table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -116,7 +126,7 @@ db.employee.belongsTo(db.hr, {
   foreignKey: {
     name: 'hrId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -125,7 +135,7 @@ db.hr.hasMany(db.employee, {
   foreignKey: {
     name: 'hrId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -134,7 +144,7 @@ db.director.hasMany(db.employee,{
   foreignKey: {
     name: 'directorId',
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -143,42 +153,22 @@ db.employee.belongsTo(db.director, {
   foreignKey: {
     name: 'directorId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
-db.hr.belongsTo(db.org, {
-  foreignKey: {
-    name: 'orgId', // Foreign key column in Employee table
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
-  as: 'organisation',
+db.hr.belongsToMany(db.org, {
+  through: "company"
 });
-
-// many employees can be in one org
-db.org.hasMany(db.hr, {
-  foreignKey: {
-    name: 'orgId', // Foreign key column in Employee table
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
-});
-
-db.hr.belongsTo(db.org, {
-  foreignKey: {
-    name: 'orgId', // Correct foreign key column in HR table for another org relationship
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
-  as: 'anotherOrg', // Alias for the association with another organization relationship (if needed)
-});
+db.org.belongsToMany(db.hr,{
+  through: "company"
+})
 
 db.hr.hasMany(db.attendance, {
   foreignKey: {
     name: 'hrId',
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   as: 'attendanceRecords'
 
@@ -188,15 +178,22 @@ db.attendance.belongsTo(db.hr, {
   foreignKey: {
     name: 'hrId', // Foreign key column in Attendance Record table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
+
+db.director.belongsToMany(db.org, {
+  through: "company"
+});
+db.org.belongsToMany(db.director,{
+  through: "company"
+})
 
 db.hr.belongsTo(db.department, {
   foreignKey: {
     name: 'departmentId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -205,7 +202,24 @@ db.department.hasMany(db.hr, {
   foreignKey: {
     name: 'departmentId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
+  },
+});
+
+db.director.belongsTo(db.department, {
+  foreignKey: {
+    name: 'departmentId', // Foreign key column in Employee table
+    type: Sequelize.INTEGER,
+    allowNull: true,
+  },
+});
+
+//many hr in one department
+db.department.hasMany(db.director, {
+  foreignKey: {
+    name: 'departmentId', // Foreign key column in Employee table
+    type: Sequelize.INTEGER,
+    allowNull: true,
   },
 });
 
@@ -214,7 +228,7 @@ db.job_title.hasMany(db.hr, {
   foreignKey: {
     name: 'jobId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
@@ -223,7 +237,24 @@ db.hr.belongsTo(db.job_title, {
   foreignKey: {
     name: 'jobId', // Foreign key column in Employee table
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
+  },
+});
+
+db.job_title.hasMany(db.director, {
+  foreignKey: {
+    name: 'jobId', // Foreign key column in Employee table
+    type: Sequelize.INTEGER,
+    allowNull: true,
+  },
+});
+
+//hr has one job title
+db.director.belongsTo(db.job_title, {
+  foreignKey: {
+    name: 'jobId', // Foreign key column in Employee table
+    type: Sequelize.INTEGER,
+    allowNull: true,
   },
 });
 
@@ -231,7 +262,7 @@ db.job_title.belongsTo(db.department,{
   foreignKey: {
     name: 'jobId',
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 });
 

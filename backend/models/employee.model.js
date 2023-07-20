@@ -40,6 +40,10 @@ module.exports = (sequelize, Sequelize) => {
     },
     employment_type: {
       type: DataTypes.STRING,
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     }
   });
    return Employee;

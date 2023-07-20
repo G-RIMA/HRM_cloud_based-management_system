@@ -14,15 +14,11 @@ module.exports = (sequelize, Sequelize) => {
     },
     address: {
       type: DataTypes.STRING(100),
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING(255),
       allowNull: true,
-    },
-    contact: {
-      type: DataTypes.INTEGER(255),
-      allowNull: false,
     },
     website: {
       type: DataTypes.STRING,

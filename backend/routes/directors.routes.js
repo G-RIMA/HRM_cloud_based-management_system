@@ -6,6 +6,10 @@ module.exports = app => {
  
   // Create a new director user
   router.post("/", director.create);
+
+  //signup director
+  router.post('/signup', director.signup);
+
   
   // Retrieve all director users
   router.get("/", director.findAll);

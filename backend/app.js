@@ -56,6 +56,7 @@ app.listen(port, () => {
 const db = require("./models");
 
 
+
 db.sequelize.sync();
 
 // if we need to drop tables
@@ -68,3 +69,5 @@ db.sequelize.sync()
     console.error("Error while synchronizing db:", error);
   });
 
+
+ 

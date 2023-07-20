@@ -39,7 +39,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     hr_type : {
       type: DataTypes.STRING,
-    }
+    },
   });
    return Hr;
 }

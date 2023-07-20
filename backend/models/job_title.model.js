@@ -10,11 +10,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     job_title: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     
   });
