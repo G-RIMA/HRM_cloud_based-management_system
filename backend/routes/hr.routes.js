@@ -9,6 +9,10 @@ module.exports = app => {
   //signup hr
   router.post('/signup', hr.signup);
 
+  //signup hr
+  router.post('/login', hr.login);
+
+
   // Retrieve all Tutorials
   router.get("/", hr.findAll);
 

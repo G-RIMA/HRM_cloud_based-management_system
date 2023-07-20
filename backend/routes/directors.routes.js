@@ -10,6 +10,10 @@ module.exports = app => {
   //signup director
   router.post('/signup', director.signup);
 
+  //login
+  //signup hr
+  router.post('/login', director.login);
+
   
   // Retrieve all director users
   router.get("/", director.findAll);

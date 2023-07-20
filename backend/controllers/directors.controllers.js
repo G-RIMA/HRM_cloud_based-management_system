@@ -189,3 +189,26 @@ exports.signup = async (req, res) => {
     return res.status(500).send({ message: err.message || "Some error occurred!" });
   }
 };
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if HR with the given email exists
+    const director = await Director.findOne({ where: { email } });
+    if (!director) {
+      return res.status(404).send({ message: 'Director not found.' });
+    }
+
+    // Compare the provided password with the hashed password in the database
+    const isPasswordValid = bcrypt.compareSync(password, director.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({ message: 'Invalid password.' });
+    }
+
+    // Return a success message or HR data if needed
+    return res.status(200).send({ message: 'Login successful!', data: director });
+  } catch (err) {
+    return res.status(500).send({ message: err.message || 'Some error occurred during login.' });
+  }
+};
