@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 const dotenv = require("dotenv")
 const cors = require("cors");
+const passport = require("passport");
+const flash = require("express-flash");
+const session = require("express-session");
 
 
 //cors provides Express middleware to enable CORS with various options.
@@ -19,6 +22,14 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+app.use(flash())
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize());
+app.use(passport.session())
 
 
 const databaseRouter = require('./routes/database');

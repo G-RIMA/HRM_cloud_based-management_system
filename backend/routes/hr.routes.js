@@ -1,16 +1,23 @@
 module.exports = app => {
   const hr = require("../controllers/hr.controllers.js");
+  const authController = require("../controllers/auth.controller.js");
 
   const router = require("express").Router();
-
+  const passport = require('passport')
+  
   // Create a new Tutorial
   router.post("/", hr.create);
 
-  //signup hr
-  router.post('/signup', hr.signup);
-
-  //signup hr
-  router.post('/login', hr.login);
+  // HR login route
+  router.post("/login", async (req, res) => {
+    await authController.login("Hr", req, res);
+  });
+    
+  router.post('/login', passport.authenticate('hr'), (req, res) => {
+    res.json({ message: 'Login successful!', user: req.user });
+  });
+    
+  
 
 
   // Retrieve all Tutorials

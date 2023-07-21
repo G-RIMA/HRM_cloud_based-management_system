@@ -25,7 +25,7 @@ const LoginForm = () => {
     
   
     return (
-    <div>
+    <div> 
         <form 
     class='form-group' 
     onSubmit={handleSubmit}>

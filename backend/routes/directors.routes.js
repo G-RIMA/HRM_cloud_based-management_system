@@ -1,19 +1,22 @@
 module.exports = app => {
   
   const director = require('../controllers/directors.controllers');
+  const authController = require("../controllers/auth.controller");
 
   const router = require("express").Router();
  
   // Create a new director user
   router.post("/", director.create);
 
-  //signup director
-  router.post('/signup', director.signup);
+  // Director login route
+  router.post("/login", async (req, res) => {
+    await authController.login("Director", req, res);
+  });
 
   //login
-  //signup hr
-  router.post('/login', director.login);
-
+  router.post("/signup", async (req, res) => {
+    await authController.signup("Director", req, res);
+  });
   
   // Retrieve all director users
   router.get("/", director.findAll);

@@ -6,8 +6,7 @@ const JobTitle = db.job_title;
 
 const Op = db.Sequelize.Op;
 const bcrypt = require("bcrypt");
-
-
+const passport = require('passport')
 
 // Create HR
 exports.create = (req, res) => {
@@ -128,92 +127,3 @@ exports.deleteHr = (req, res) => {
     });
 };
 
-// ... Your other code ...
-
-exports.signup = async (req, res) => {
-  try {
-    // Validate request
-    if (!req.body) {
-      return res.status(400).send({
-        success: false,
-        message: "Content can not be empty!",
-      });
-    }
-
-    const { first_name, last_name, email, password, hr_type, position, wage, org_name, job_title, dep_name } = req.body;
-
-    // Check if HR with the given email already exists
-    const existingHr = await Hr.findOne({ where: { email } });
-
-    if (existingHr) {
-      return res.status(409).send({ success: false, message: "HR with this email already exists." });
-    }
-
-    // Hash the password before saving it to the database
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Find or create the organization based on its name
-    const organization = await Org.findOrCreate({
-      where: { org_name },
-      defaults: { org_name, address: "", email: "", website: "" },
-    });
-
-    // Find or create the department based on its name
-    const department = await departmentModel.findOrCreate({
-      where: { dep_name },
-      defaults: { dep_name },
-    });
-
-    // Find or create the department based on its name
-    const job = await JobTitle.findOrCreate({
-      where: { job_title },
-      defaults: { job_title },
-    });
-
-    // Create a new HR instance with the hashed password
-    const hr = {
-      first_name,
-      last_name,
-      email,
-      password: hashedPassword,
-      hr_type,
-      position,
-      wage,
-      orgId: organization[0].id,
-      departmentId: department[0].id,
-      jobId: job[0].id,
-    };
-
-    // Save the HR instance to the database
-    const createdHr = await Hr.create(hr);
-
-    return res.status(201).send({ success: true, message: "HR created successfully!", data: createdHr });
-  } catch (err) {
-    return res.status(500).send({ success: false, message: err.message || "Some error occurred!" });
-  }
-};
-
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    
-
-    // Check if HR with the given email exists
-    const hr = await Hr.findOne({ where: { email } });
-    if (!hr) {
-      return res.status(404).send({ success: false, message: 'HR not found.' });
-    } 
-    // Compare the provided password with the hashed password in the database
-    const isPasswordValid = await bcrypt.compare(password, hr.password);
-    if (!isPasswordValid) {
-      return res.status(401).send({ success: false, message: 'Invalid email or password.' });
-    } else {
-      console.log('Found HR:', password);
-    }
-
-    // Return a success message or HR data if needed
-    return res.status(200).send({ success: true, message: 'Login successful!', data: hr });
-  } catch (err) {
-    return res.status(500).send({ success: false, message: err.message || 'Some error occurred during login.' });
-  }
-};

@@ -1,7 +1,21 @@
 module.exports = app => {
   const employee = require('../controllers/employees.controller');
+  const authController = require("../controllers/auth.controller");
   
   const router = require("express").Router()
+  
+  // routes/employeeRoutes.js
+  const passport = require('passport');
+
+  router.post("/signup", async (req, res) => {
+    await authController.signup("Employee", req, res);
+  });
+  
+  // Employee login route
+  router.post("/login", async (req, res) => {
+    await authController.login("Employee", req, res);
+  });
+    
   
   // Create a new  user
   router.post("/", employee.create);
