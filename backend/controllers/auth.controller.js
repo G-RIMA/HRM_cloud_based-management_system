@@ -4,7 +4,14 @@ const db = require("../models"); // Import your models here
 const Hr = db.hr;
 const Director = db.director;
 const Employee = db.employee;
+const Org = db.org;
+const departmentModel = db.department;
+const JobTitle = db.job_title;
 
+const Op = db.Sequelize.Op;
+
+const dotenv = require("dotenv")
+dotenv.config()
 
 // Shared function for signup logic
 exports.signup = async (userType, req, res) => {
@@ -17,7 +24,7 @@ exports.signup = async (userType, req, res) => {
     }
 
     // Extract data from the request body
-    const { first_name, last_name, email, password, hr_type, position, wage } = req.body;
+    const { first_name, last_name, email, password, hr_type, position, wage, org_name, job_title, dep_name } = req.body;
 
     // Determine the model based on the userType
     let userModel;
@@ -41,6 +48,24 @@ exports.signup = async (userType, req, res) => {
       return res.status(409).send({ message: `${userType} with this email already exists.` });
     }
 
+    const organization = await Org.findOrCreate({
+      where: { org_name },
+      defaults: { org_name, address: "", email: "", website: "" },
+    });
+
+    // Find or create the department based on its name
+    const department = await departmentModel.findOrCreate({
+      where: { dep_name },
+      defaults: { dep_name },
+    });
+
+    // Find or create the department based on its name
+    const job = await JobTitle.findOrCreate({
+      where: { job_title },
+      defaults: { job_title },
+    });
+
+
     // Create a new user instance with the hashed password
     const newUser = {
       first_name,
@@ -49,7 +74,11 @@ exports.signup = async (userType, req, res) => {
       password,
       hr_type,
       position,
-      wage
+      wage,
+      orgId: organization[0].id,
+      departmentId: department[0].id,
+      jobId: job[0].id,
+
     };
 
     // Save the user instance to the database
@@ -94,7 +123,7 @@ exports.login = async (userType, req, res) => {
       }
   
       // Generate a JWT token for authentication
-      const token = jwt.sign({ id: user.id }, "your_secret_key_here", { expiresIn: "1h" });
+      const token = jwt.sign({ id: user.id }, "process.env.SESSION_SECRET", { expiresIn: "1h" });
   
       // Return the token as part of the response
       return res.status(200).send({ message: "Login successful!", token });
