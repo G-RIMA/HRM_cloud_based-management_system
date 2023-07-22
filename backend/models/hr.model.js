@@ -21,10 +21,6 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    position: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,

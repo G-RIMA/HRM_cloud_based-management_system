@@ -9,11 +9,8 @@ const session = require("express-session");
 
 
 //cors provides Express middleware to enable CORS with various options.
-var corsOptions = {
-  origin: "https://localhost:3000"
-}
 
-app.use(cors(corsOptions));
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 dotenv.config();
 

@@ -8,17 +8,14 @@ module.exports = app => {
   // Create a new Tutorial
   router.post("/", hr.create);
 
-  // HR login route
+  router.post("/signup", async (req, res) => {
+    await authController.signup("Hr", req, res);
+  });
+  
+  // Employee login route
   router.post("/login", async (req, res) => {
     await authController.login("Hr", req, res);
   });
-    
-  router.post('/login', passport.authenticate('hr'), (req, res) => {
-    res.json({ message: 'Login successful!', user: req.user });
-  });
-    
-  
-
 
   // Retrieve all Tutorials
   router.get("/", hr.findAll);

@@ -1,11 +1,6 @@
 const db = require("../models");
 const Director = db.director;
-const Org = db.org;
-const departmentModel = db.department;
-const JobTitle = db.job_title;
-
 const Op = db.Sequelize.Op;
-const bcrypt = require("bcrypt");
 
 
 // Create Directoe
@@ -23,7 +18,6 @@ exports.create = (req, res) => {
     last_name: req.body.last_name,
     email: req.body.email,
     password: req.body.password,
-    position: req.body.position,
     wage: req.body.wage
   });
 

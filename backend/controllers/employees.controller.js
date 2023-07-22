@@ -19,7 +19,6 @@ exports.create = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     employee_type: req.body.employee_type,
-    position: req.body.position,
     wage: req.body.wage
   });
 

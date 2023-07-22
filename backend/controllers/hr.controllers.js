@@ -1,12 +1,8 @@
 const db = require("../models");
 const Hr = db.hr;
-const Org = db.org;
-const departmentModel = db.department;
-const JobTitle = db.job_title;
 
 const Op = db.Sequelize.Op;
-const bcrypt = require("bcrypt");
-const passport = require('passport')
+
 
 // Create HR
 exports.create = (req, res) => {
@@ -24,7 +20,6 @@ exports.create = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     hr_type: req.body.hr_type,
-    position: req.body.position,
     wage: req.body.wage
   });
 

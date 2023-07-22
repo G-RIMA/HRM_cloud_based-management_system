@@ -24,7 +24,7 @@ exports.signup = async (userType, req, res) => {
     }
 
     // Extract data from the request body
-    const { first_name, last_name, email, password, hr_type, position, wage, org_name, job_title, dep_name } = req.body;
+    const { first_name, last_name, email, password, hr_type, wage, org_name, job_title, dep_name } = req.body;
 
     // Determine the model based on the userType
     let userModel;
@@ -73,7 +73,6 @@ exports.signup = async (userType, req, res) => {
       email,
       password,
       hr_type,
-      position,
       wage,
       orgId: organization[0].id,
       departmentId: department[0].id,

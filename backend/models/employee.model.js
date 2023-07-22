@@ -22,10 +22,6 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    position: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -41,10 +37,7 @@ module.exports = (sequelize, Sequelize) => {
     employment_type: {
       type: DataTypes.STRING,
     },
-    isAdmin: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    }
+    
   });
    return Employee;
 }
