@@ -26,7 +26,7 @@ db.attendance = require("./attendance.model.js")(sequelize, Sequelize);
 db.leave = require("./leave.model.js")(sequelize, Sequelize);
 db.department = require("./department.model.js")(sequelize, Sequelize);
 db.job_title = require("./job_title.model.js")(sequelize, Sequelize);
-//db.roles = require("../models/roles.model.js")(sequelize, Sequelize);
+db.userSession = require("./userSession.js")(sequelize, Sequelize);
 
 //connect roles to employees
 //db.roles.belongsToMany(db.employee, {
@@ -265,6 +265,10 @@ db.job_title.belongsTo(db.department,{
     allowNull: true,
   },
 });
+
+db.attendance.belongsTo(db.department, {
+  
+})
 
 
 

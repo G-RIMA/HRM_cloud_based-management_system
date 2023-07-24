@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../models"); // Import your models here
+const UserSession = db.userSession;
 const Hr = db.hr;
 const Director = db.director;
 const Employee = db.employee;
@@ -120,9 +121,20 @@ exports.login = async (userType, req, res) => {
       if (!isPasswordValid) {
         return res.status(401).send({ message: "Invalid password." });
       }
+
+      // Check if the user object has the 'type' property
   
       // Generate a JWT token for authentication
-      const token = jwt.sign({ id: user.id }, "process.env.SESSION_SECRET", { expiresIn: "1h" });
+      const token = jwt.sign({ id: user.id, type: user.type}, process.env.SESSION_SECRET, { expiresIn: "1h" });
+
+      // Save the user session to the database
+      const expiresAt = new Date(Date.now() + 3600 * 1000); // Set expiration to 1 hour from now
+      const userSession = await UserSession.create({
+        token,
+        userId: user.id,
+        userType: user.type,
+        expiresAt,
+      });
   
       // Return the token as part of the response
       return res.status(200).send({ message: "Login successful!", token });

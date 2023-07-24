@@ -1,120 +1,218 @@
 const db = require("../models");
 const Attendance = db.attendance;
 const Op = db.Sequelize.Op;
- // Assuming you have a model named "attendance" for the attendance records
+const asyncHandler = require("express-async-handler");
+const { userType } = require("./auth.controller");
+const UserSession = db.userSession;
+
 
 // Create a new attendance record
-exports.create = (req, res) => {
-    // Validate request
-    if (!req.body) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
-        return;
+exports.createAttendance = asyncHandler(async (req, res) => {
+  try {
+    // Extract the token from the request headers
+    const token = req.headers.authorization.split(" ")[1];
+    // Assuming the token is in the format: "Bearer <token>"
+    
+    // Fetch the user information from the UserSession model
+    const userSession = await UserSession.findOne({ where: { token } });
+    if (!userSession) {
+      return res.status(401).json({ error: "Unauthorized. Invalid or expired token." });
     }
+
+    // Extract the userType and attendanceOwnerId from the userSession
+    const { userType } = userSession;
+    const attendanceOwnerId = userSession.userId;
+
+    // Check if the user has access to attendance records
+    if (!hasAccessToAttendance(userType, attendanceOwnerId)) {
+      return res.status(403).json({ error: "Unauthorized to access attendance records." });
+    }
+
+    // ... The rest of the code to create the attendance record ...
+  } catch (err) {
+    return res.status(500).json({ error: "Something went wrong while creating the attendance record." });
+  }
+
+  const hasAccessToAttendance = (userType, attendanceOwnerId) => {
+    // Check if the user is HR or director, they have access to all attendance records
+    if (userType === "Hr" || userType === "Director") {
+      return true;
+    }
+  
+    // For employees, they have access only to their own attendance records
+    return userType === "Employee" && userType.id === attendanceOwnerId;
+  };
+  
+  const {
+    date,
+    check_in,
+    check_out,
+    lunch_check_in,
+    lunch_check_out,
+    details,
+  } = req.body;
+
+  const newAttendance = await Attendance.create({
+    date,
+    check_in,
+    check_out,
+    lunch_check_in,
+    lunch_check_out,
+    details,
+  });
+
+  res.status(201).json(newAttendance);
+});
+
+// Update an existing attendance record
+exports.updateAttendance = asyncHandler(async (req, res) => {
+   // Assuming you have extracted the user information from the JWT token and stored it in req.user
+   try {
+    // Extract the token from the request headers
+    const token = req.headers.authorization.split(" ")[1];
+    // Assuming the token is in the format: "Bearer <token>"
     
-    // Create an attendance record
-    const attendance = {
-        check_in: req.body.check_in,
-        check_out: req.body.check_out,
-        lunch_check_in: req.body.lunch_check_in,
-        lunch_check_out: req.body.lunch_check_out,
-        employeeId: req.body.employeeId,
-        hrId: req.body.hrId,
-    };
+    // Fetch the user information from the UserSession model
+    const userSession = await UserSession.findOne({ where: { token } });
+    if (!userSession) {
+      return res.status(401).json({ error: "Unauthorized. Invalid or expired token." });
+    }
+
+    // Extract the userType and attendanceOwnerId from the userSession
+    const { userType } = userSession;
+    const attendanceOwnerId = userSession.userId;
+
+    // Check if the user has access to attendance records
+    if (!hasAccessToAttendance(userType, attendanceOwnerId)) {
+      return res.status(403).json({ error: "Unauthorized to access attendance records." });
+    }
+
+    // ... The rest of the code to update the attendance record ...
+  } catch (err) {
+    return res.status(500).json({ error: "Something went wrong while updating the attendance record." });
+  }
+
+  const { id } = req.params;
+  const {
+    date,
+    check_in,
+    check_out,
+    lunch_check_in,
+    lunch_check_out,
+    details,
+  } = req.body;
+
+  const attendance = await Attendance.findByPk(id);
+  if (!attendance) {
+    res.status(404);
+    throw new Error("Attendance record not found");
+  }
+
+  attendance.date = date;
+  attendance.check_in = check_in;
+  attendance.check_out = check_out;
+  attendance.lunch_check_in = lunch_check_in;
+  attendance.lunch_check_out = lunch_check_out;
+  attendance.details = details;
+
+  await attendance.save();
+
+  res.json(attendance);
+});
+
+// Delete an attendance record
+exports.deleteAttendance = asyncHandler(async (req, res) => {
+  try {
+    // Extract the token from the request headers
+    const token = req.headers.authorization.split(" ")[1];
+    // Assuming the token is in the format: "Bearer <token>"
     
-    // Save the attendance record in the database
-    Attendance.create(attendance)
-    .then(data => {
-        res.send(data);
-    }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the attendance record."
-        });
+    // Fetch the user information from the UserSession model
+    const userSession = await UserSession.findOne({ where: { token } });
+    if (!userSession) {
+      return res.status(401).json({ error: "Unauthorized. Invalid or expired token." });
+    }
+
+    // Extract the userType and attendanceOwnerId from the userSession
+    const { userType } = userSession;
+    const attendanceOwnerId = userSession.userId;
+
+    // Check if the user has access to attendance records
+    if (!hasAccessToAttendance(userType, attendanceOwnerId)) {
+      return res.status(403).json({ error: "Unauthorized to access attendance records." });
+    }
+
+    // ... The rest of the code to delete the attendance record ...
+  } catch (err) {
+    return res.status(500).json({ error: "Something went wrong while deleting the attendance record." });
+  } 
+
+  const { id } = req.params;
+  const attendance = await Attendance.findByPk(id);
+  if (!attendance) {
+    res.status(404);
+    throw new Error("Attendance record not found");
+  }
+
+  await attendance.destroy();
+
+  res.json({ message: "Attendance record deleted successfully" });
+});
+
+// Find attendance records by date, time, or department
+exports.findAttendance = asyncHandler(async (req, res) => {
+  try {
+    // Extract the token from the request headers
+    const token = req.headers.authorization.split(" ")[1];
+    // Assuming the token is in the format: "Bearer <token>"
+    
+    // Fetch the user information from the UserSession model
+    const userSession = await UserSession.findOne({ where: { token } });
+    if (!userSession) {
+      return res.status(401).json({ error: "Unauthorized. Invalid or expired token." });
+    }
+
+    // Extract the userType and attendanceOwnerId from the userSession
+    const { userType } = userSession;
+    const attendanceOwnerId = userSession.userId;
+
+    // Check if the user has access to attendance records
+    if (!hasAccessToAttendance(userType, attendanceOwnerId)) {
+      return res.status(403).json({ error: "Unauthorized to access attendance records." });
+    }
+
+    // Rest of the code to find the attendance records
+    const { date, time, department } = req.query;
+    const whereClause = {};
+
+    if (date) {
+      whereClause.date = date;
+    }
+
+    if (time) {
+      whereClause[Op.or] = {
+        check_in: { [Op.lte]: time },
+        check_out: { [Op.gte]: time },
+        lunch_check_in: { [Op.lte]: time },
+        lunch_check_out: { [Op.gte]: time },
+      };
+    }
+
+    if (department) {
+      whereClause.department = department;
+    }
+
+    const attendance = await Attendance.findAll({
+      where: whereClause,
     });
-};
 
-// Mark an employee as "checked in" with the current timestamp
-exports.markIn = (req, res) => {
-  const employeeId = req.params.employeeId;
+    if (attendance.length === 0) {
+      res.status(404);
+      throw new Error("No attendance records found");
+    }
 
-  // Assuming you have a function to get the current timestamp
-  const currentTime = new Date();
-
-  // Update the checkInTime field for the employee with the current timestamp
-  Attendance.update({ check_in: currentTime }, {
-    where: { employeeId: employeeId }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "Employee check-in time was updated successfully."
-        });
-      } else {
-        res.send({
-          message: `Cannot update check-in time for employee with id=${employeeId}.`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating check-in time for employee with id=" + employeeId
-      });
-    });
-};
-
-
-
-// Mark an employee as "checked out" with the current timestamp
-exports.markOut = (req, res) => {
-  const employeeId = req.params.employeeId;
-
-  // Assuming you have a function to get the current timestamp
-  const currentTime = new Date();
-
-  // Update the checkOutTime field for the employee with the current timestamp
-  Attendance.update({ check_out: currentTime }, {
-    where: { employeeId: employeeId }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "Employee check-out time was updated successfully."
-        });
-      } else {
-        res.send({
-          message: `Cannot update check-out time for employee with id=${employeeId}.`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating check-out time for employee with id=" + employeeId
-      });
-    });
-};
-
-// Delete an attendance record by ID
-exports.deleteAttendance = (req, res) => {
-  const id = req.params.id;
-
-  Attendance.destroy({
-    where: { id: id }
-  })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          message: "Attendance record was deleted successfully."
-        });
-      } else {
-        res.send({
-          message: `Cannot delete attendance record with id=${id}.`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete attendance record with id=" + id
-      });
-    });
-};
+    res.json(attendance);
+  } catch (err) {
+    return res.status(500).json({ error: "Something went wrong while fetching attendance records." });
+  }
+});

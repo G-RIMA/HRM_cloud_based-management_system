@@ -8,26 +8,52 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    check_in: {
+    date: {
       type: DataTypes.DATE,
+      allowNull: false,
+    },
+    check_in: {
+      type: DataTypes.TIME,
       allowNull: false,
     },
     check_out: {
-      type: DataTypes.DATE,
+      type: DataTypes.TIME,
       allowNull: false,
     },
     lunch_check_in: {
-      type: DataTypes.DATE,
+      type: DataTypes.TIME,
       allowNull: false,
     },
     lunch_check_out: {
-      type: DataTypes.DATE,
+      type: DataTypes.TIME,
       allowNull: false,
     },
-    total_time: {
-      type: DataTypes.DATE,
+    details: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    // Additional fields for reporting and analytics
+    total_working_hours: {
+      type: DataTypes.TIME,
       allowNull: false,
-    }
+      defaultValue: '00:00:00',
+    },
+    overtime: {
+      type: DataTypes.TIME,
+      allowNull: false,
+      defaultValue: '00:00:00',
+    },
+    late_arrivals: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    early_departures: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   });
-   return Attendance;
-}
+
+  return Attendance;
+};
