@@ -41,12 +41,12 @@ module.exports = (sequelize, Sequelize) => {
       defaultValue: '00:00:00',
     },
     late_arrivals: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TIME,
       allowNull: true,
       defaultValue: 0,
     },
     early_departures: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TIME,
       allowNull: true,
       defaultValue: 0,
     },

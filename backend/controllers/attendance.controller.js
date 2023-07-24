@@ -116,10 +116,31 @@ exports.recordCheckOut = asyncHandler(async (req, res) => {
     const CheckOutTime = new Date();
 
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
-    const attendance = await Attendance.create({
+    const attendance = await Attendance.findOne({ where:{
       UserId,
-      check_out: CheckOutTime, // Assuming you have a field "check_in" in the Attendance model
+      check_out: null,} // Assuming you have a field "check_in" in the Attendance model
     });
+
+    if (!attendance) {
+      return res.status(404).json({ error: 'No active check-in found for the user.' });
+    }
+
+    attendance.check_out = CheckOutTime;
+    await attendance.save();
+
+    // Calculate total working hours, overtime, late arrivals, and early departures
+    const totalWorkingHours = calculateTotalWorkingHours(attendance.check_in, CheckOutTime);
+    const overtime = calculateOvertime(totalWorkingHours);
+    const lateArrivals = calculateLateArrivals(attendance.check_in);
+    const earlyDepartures = calculateEarlyDepartures(CheckOutTime);
+
+    // Update the Attendance model with the calculated values
+    attendance.total_working_hours = totalWorkingHours;
+    attendance.overtime = overtime;
+    attendance.late_arrivals = lateArrivals;
+    attendance.early_departures = earlyDepartures;
+
+    await attendance.save();
 
     res.status(201).json({ message: "Check-Out recorded successfully.", attendance });
   } catch (err) {
@@ -127,3 +148,57 @@ exports.recordCheckOut = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Something went wrong while recording the check-in." });
   }
 });
+
+
+const calculateTotalWorkingHours = (checkInTime, checkOutTime) => {
+  const diffInMilliseconds = checkOutTime - checkInTime;
+  const totalWorkingHours = new Date(diffInMilliseconds);
+  return totalWorkingHours;
+};
+
+const calculateOvertime = (totalWorkingHours) => {
+  // Example: Calculate overtime if totalWorkingHours is greater than regular working hours
+  const regularWorkingHours = '08:00:00';
+  if (totalWorkingHours > regularWorkingHours) {
+    const diffInMilliseconds = new Date(totalWorkingHours) - new Date(regularWorkingHours);
+    const overtime = new Date(diffInMilliseconds);
+    return overtime;
+  }
+  return '00:00:00';
+};
+
+const calculateLateArrivals = (checkInTime) => {
+  const regularCheckInTime = new Date(checkInTime);
+  regularCheckInTime.setHours(8, 0, 0); // Assuming regular check-in time is 8:00 AM
+  if (checkInTime > regularCheckInTime) {
+    const diffInMilliseconds = checkInTime - regularCheckInTime;
+    const lateArrival = new Date(diffInMilliseconds)
+    return lateArrival;
+  }
+  return '00:00:00';
+};
+
+const calculateEarlyDepartures = (checkOutTime) => {
+  const regularCheckOutTime = new Date(checkOutTime);
+  regularCheckOutTime.setHours(17, 0, 0); // Assuming regular check-out time is 5:00 PM
+  if (checkOutTime < regularCheckOutTime) {
+    const diffInMilliseconds = regularCheckOutTime - checkOutTime;
+    const earlyDeparture = new Date(diffInMilliseconds)
+    return earlyDeparture;
+  }
+  return '00:00:00';
+};
+
+exports.getAttendanceRecords = async (req, res) => {
+  const UserId = req.params.UserId;
+
+  try {
+    // Query the database to get attendance records for the user
+    const attendanceRecords = await Attendance.findAll({ where: { UserId } });
+
+    res.status(200).json({ attendanceRecords });
+  } catch (err) {
+    console.error('Error fetching attendance records:', err);
+    res.status(500).json({ error: 'Something went wrong while fetching attendance records.' });
+  }
+};

@@ -15,5 +15,8 @@ module.exports = (app) => {
   // Route to record check-out time
   router.post("/record-check-out", attendance.recordCheckOut);
 
+  //get all records
+  router.get('/User/:UserId/attendance', attendance.getAttendanceRecords);
+
   app.use("/api/attendance", router);
 };
