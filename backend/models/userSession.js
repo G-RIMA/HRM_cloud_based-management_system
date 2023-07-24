@@ -14,13 +14,9 @@ module.exports = (sequelize, Sequelize)=>{
             type: DataTypes.STRING,
             allowNull: false,
         },
-        userId: {
+        UserId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
-        userType: {
-            type: DataTypes.STRING,
-            allowNull: true,
         },
         expiresAt: {
             type: DataTypes.DATE,

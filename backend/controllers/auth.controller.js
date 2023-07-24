@@ -131,8 +131,7 @@ exports.login = async (userType, req, res) => {
       const expiresAt = new Date(Date.now() + 3600 * 1000); // Set expiration to 1 hour from now
       const userSession = await UserSession.create({
         token,
-        userId: user.id,
-        userType: user.type,
+        UserId: user.id,
         expiresAt,
       });
   

@@ -94,15 +94,6 @@ db.employee.belongsTo(db.job_title, {
   },
 });
 
-//employess have many attendance records
-db.employee.hasMany(db.attendance, {
-  foreignKey: {
-    name: 'employeeId', // Foreign key column in Attendance table
-    type: Sequelize.INTEGER,
-    allowNull: true,
-  },
-});
-
 //employees have many leave record
 db.employee.hasMany(db.leave, {
   foreignKey: {
@@ -163,24 +154,6 @@ db.hr.belongsToMany(db.org, {
 db.org.belongsToMany(db.hr,{
   through: "company"
 })
-
-db.hr.hasMany(db.attendance, {
-  foreignKey: {
-    name: 'hrId',
-    type: Sequelize.INTEGER,
-    allowNull: true,
-  },
-  as: 'attendanceRecords'
-
-});
-
-db.attendance.belongsTo(db.hr, {
-  foreignKey: {
-    name: 'hrId', // Foreign key column in Attendance Record table
-    type: Sequelize.INTEGER,
-    allowNull: true,
-  },
-});
 
 db.director.belongsToMany(db.org, {
   through: "company"
@@ -266,10 +239,19 @@ db.job_title.belongsTo(db.department,{
   },
 });
 
-db.attendance.belongsTo(db.department, {
-  
-})
+db.attendance.belongsTo(db.userSession, {
+  foreignKey: {
+  name: 'UserId',
+  type: Sequelize.INTEGER,
+  allowNull: false,
+},
+  as: 'userSession',
+});
 
+db.attendance.belongsTo(db.employee, { foreignKey: 'employeeId' }); // Attendance belongs to an Employee
+db.attendance.belongsTo(db.attendance,{ foreignKey: 'attendanceId' } ); // Attendance belongs to a Director
+db.attendance.belongsTo(db.hr, { foreignKey: 'hrId' }); // Attendance belongs to an HR
+db.attendance.belongsTo(db.department, { foreignKey: 'departmentId' });
 
 
 module.exports = db;

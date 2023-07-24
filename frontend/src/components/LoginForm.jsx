@@ -58,7 +58,8 @@ const LoginForm = () => {
   const login = async (userType, userData) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/${userType.toLowerCase()}/login`, userData);
-      console.log(response.data);
+      const token = response.data.token; // Assuming the response contains the JWT token as "token"
+      localStorage.setItem('token', token); 
       // Handle successful login, e.g., redirect to a dashboard page
     } catch (error) {
       console.error(error);

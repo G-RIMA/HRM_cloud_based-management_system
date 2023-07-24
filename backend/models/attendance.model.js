@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const { attendance } = require('./index.js');
 const sequelize = require('./index.js').sequelize
 
 module.exports = (sequelize, Sequelize) => {
@@ -8,25 +9,21 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
     check_in: {
       type: DataTypes.TIME,
-      allowNull: false,
+      allowNull: true, // Allow null to indicate not checked-in yet
     },
     check_out: {
       type: DataTypes.TIME,
-      allowNull: false,
+      allowNull: true, // Allow null to indicate not checked-out yet
     },
     lunch_check_in: {
       type: DataTypes.TIME,
-      allowNull: false,
+      allowNull: true, // Allow null to indicate not checked-in for lunch yet
     },
     lunch_check_out: {
       type: DataTypes.TIME,
-      allowNull: false,
+      allowNull: true, // Allow null to indicate not checked-out for lunch yet
     },
     details: {
       type: DataTypes.STRING,
@@ -35,24 +32,25 @@ module.exports = (sequelize, Sequelize) => {
     // Additional fields for reporting and analytics
     total_working_hours: {
       type: DataTypes.TIME,
-      allowNull: false,
+      allowNull: true,
       defaultValue: '00:00:00',
     },
     overtime: {
       type: DataTypes.TIME,
-      allowNull: false,
+      allowNull: true,
       defaultValue: '00:00:00',
     },
     late_arrivals: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       defaultValue: 0,
     },
     early_departures: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       defaultValue: 0,
     },
+    
   });
 
   return Attendance;
