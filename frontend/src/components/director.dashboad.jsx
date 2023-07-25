@@ -1,9 +1,10 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 import api from './api';
 
-const DirectorDashboard = ({ UserId }) => {
+const DirectorDashboard = (props) => {
   const history = useNavigate();
 
   const handleRecordCheckIn = async () => {
@@ -65,60 +66,58 @@ const DirectorDashboard = ({ UserId }) => {
     localStorage.removeItem('token');
     history.push('/login');
   };
-
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
-
+  
   useEffect(() => {
-    // Fetch attendance records for the logged-in user
-    const fetchAttendanceRecords = async () => {
-      try {
-        const response = await axios.get(`/api/user/${UserId}/attendance`);
-        setAttendanceRecords(response.data.attendanceRecords);
-      } catch (error) {
-        console.error('Error fetching attendance records:', error);
-      }
-    };
+    fetchAttendanceData();
+  }, []);
 
-    fetchAttendanceRecords();
-  }, [UserId]);
+  const fetchAttendanceData = async () => {
+    try {
+      const response = await axios.get('/api/attendance/records');
+      setRecords(response.data);
+    } catch (error) {
+      console.error('Error fetching attendance data:', error);
+    }
+  };
+    
 
   return (
     <div>
       <h1>Welcome to the Dashboard!</h1>
       <div>
-      <h2>Dashboard</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Check-in</th>
-            <th>Check-out</th>
-            <th>Total Working Hours</th>
-            <th>Overtime</th>
-            <th>Late Arrivals</th>
-            <th>Early Departures</th>
-          </tr>
-        </thead>
-        <tbody>
-          {attendanceRecords.map((record) => (
+        <h2>Dashboard</h2>
+      </div>
+      <div>
+        <button onClick={handleRecordCheckIn}>Record Check-In</button>
+        <button onClick={handleRecordLunchCheckOut}>Record Lunch Check-Out</button>
+        <button onClick={handleRecordLunchCheckIn}>Record Lunch Check-In</button>
+        <button onClick={handleRecordCheckOut}>Record Check-Out</button>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>Check-In</th>
+              <th>Lunch Check-Out</th>
+              <th>Lunch Check-In</th>
+              <th>Check-Out</th>
+            </tr>
+          </thead>
+          <tbody>
+          {record.map((record) => (
             <tr key={record.id}>
-              <td>{record.date}</td>
               <td>{record.check_in}</td>
               <td>{record.check_out}</td>
-              <td>{record.total_working_hours}</td>
-              <td>{record.overtime}</td>
-              <td>{record.late_arrivals}</td>
-              <td>{record.early_departures}</td>
+              <td>{record.lunch_check_in}</td>
+              <td>{record.lunch_check_out}</td>
             </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
-      <button onClick={handleRecordCheckIn}>Record Check-In</button>
-      <button onClick={handleRecordLunchCheckOut}>Record Lunch Check-Out</button>
-      <button onClick={handleRecordLunchCheckIn}>Record Lunch Check-In</button>
-      <button onClick={handleRecordCheckOut}>Record Check-Out</button>
-      <button onClick={handleLogout}>Logout</button>
+          </tbody>
+        </table>
+      </div>
+      
     </div>
   );
 };

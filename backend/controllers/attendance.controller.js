@@ -13,6 +13,7 @@ const getUserIdFromToken = async (token) => {
   return userSession.UserId;
 };
 
+
 // Record the check-in time
 exports.recordCheckIn = asyncHandler(async (req, res) => {
   try {
@@ -31,8 +32,8 @@ exports.recordCheckIn = asyncHandler(async (req, res) => {
 
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
     const attendance = await Attendance.create({
-      UserId, // Use the correct userId obtained from the token
-      check_in: checkInTime, // Assuming you have a field "check_in" in the Attendance model
+        UserId,
+        check_in: checkInTime,
     });
 
     res.status(201).json({ message: "Check-in recorded successfully.", attendance });
@@ -56,14 +57,22 @@ exports.recordLunchCheckOut = asyncHandler(async (req, res) => {
       return res.status(401).json({ error: "Unauthorized. Invalid or expired token." });
     }
 
-    // Save the check-in time in the database (you can modify the attendance model accordingly)
-    const LunchCheckOutTime = new Date();
+    // Save the check-in time in the database (you can modify the attendance model accordingly
 
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
-    const attendance = await Attendance.create({
-      UserId,
-      lunch_check_out: LunchCheckOutTime, // Assuming you have a field "check_in" in the Attendance model
+    const attendance = await Attendance.findOne({
+      where: {
+        UserId,
+      },
     });
+
+    if (!attendance) {
+      return res.status(404).json({ error: "No active attendance record found for the user." });
+    }
+
+    // Update the lunch check-in time in the existing "Attendance" record
+    attendance.lunch_check_out = new Date();
+    await attendance.save();
 
     res.status(201).json({ message: "Lunch Check-Out recorded successfully.", attendance });
   } catch (err) {
@@ -85,13 +94,22 @@ exports.recordLunchCheckIn = asyncHandler(async (req, res) => {
     }
 
     // Save the check-in time in the database (you can modify the attendance model accordingly)
-    const LunchCheckInTime = new Date();
+    //const LunchCheckInTime = new Date();
 
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
-    const attendance = await Attendance.create({
-      UserId,
-      lunch_check_in: LunchCheckInTime, // Assuming you have a field "check_in" in the Attendance model
+    const attendance = await Attendance.findOne({
+      where: {
+        UserId,
+      },
     });
+
+    if (!attendance) {
+      return res.status(404).json({ error: "No active attendance record found for the user." });
+    }
+
+    // Update the lunch check-in time in the existing "Attendance" record
+    attendance.lunch_check_in = new Date();
+    await attendance.save();
 
     res.status(201).json({ message: "Lunch Check-In recorded successfully.", attendance });
   } catch (err) {
@@ -102,103 +120,46 @@ exports.recordLunchCheckIn = asyncHandler(async (req, res) => {
 
 exports.recordCheckOut = asyncHandler(async (req, res) => {
   try {
-    // Extract the token from the request headers
     const token = req.headers.authorization.split(" ")[1];
-    // Assuming the token is in the format: "Bearer <token>"
-    
-    // Fetch the userId from the UserSession based on the token
+
     const UserId = await getUserIdFromToken(token);
     if (!UserId) {
       return res.status(401).json({ error: "Unauthorized. Invalid or expired token." });
     }
 
-    // Save the check-in time in the database (you can modify the attendance model accordingly)
-    const CheckOutTime = new Date();
+    // Save the check-out time in the database (you can modify the attendance model accordingly)
+    const checkOutTime = new Date();
 
-    // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
-    const attendance = await Attendance.findOne({ where:{
-      UserId,
-      check_out: null,} // Assuming you have a field "check_in" in the Attendance model
+    // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime" and "checkOutTime"
+    const attendance = await Attendance.findOne({
+      where: {
+        UserId,
+      },
     });
 
     if (!attendance) {
-      return res.status(404).json({ error: 'No active check-in found for the user.' });
+      return res.status(404).json({ error: 'No active check-out found for the user.' });
     }
 
-    attendance.check_out = CheckOutTime;
-    await attendance.save();
-
-    // Calculate total working hours, overtime, late arrivals, and early departures
-    const totalWorkingHours = calculateTotalWorkingHours(attendance.check_in, CheckOutTime);
-    const overtime = calculateOvertime(totalWorkingHours);
-    const lateArrivals = calculateLateArrivals(attendance.check_in);
-    const earlyDepartures = calculateEarlyDepartures(CheckOutTime);
-
-    // Update the Attendance model with the calculated values
-    attendance.total_working_hours = totalWorkingHours;
-    attendance.overtime = overtime;
-    attendance.late_arrivals = lateArrivals;
-    attendance.early_departures = earlyDepartures;
-
+    attendance.check_out = checkOutTime;
     await attendance.save();
 
     res.status(201).json({ message: "Check-Out recorded successfully.", attendance });
   } catch (err) {
-    console.error("Error recording check-in:", err);
-    res.status(500).json({ error: "Something went wrong while recording the check-in." });
+    console.error("Error recording check-out:", err);
+    res.status(500).json({ error: "Something went wrong while recording the check-out." });
   }
 });
 
-
-const calculateTotalWorkingHours = (checkInTime, checkOutTime) => {
-  const diffInMilliseconds = checkOutTime - checkInTime;
-  const totalWorkingHours = new Date(diffInMilliseconds);
-  return totalWorkingHours;
-};
-
-const calculateOvertime = (totalWorkingHours) => {
-  // Example: Calculate overtime if totalWorkingHours is greater than regular working hours
-  const regularWorkingHours = '08:00:00';
-  if (totalWorkingHours > regularWorkingHours) {
-    const diffInMilliseconds = new Date(totalWorkingHours) - new Date(regularWorkingHours);
-    const overtime = new Date(diffInMilliseconds);
-    return overtime;
-  }
-  return '00:00:00';
-};
-
-const calculateLateArrivals = (checkInTime) => {
-  const regularCheckInTime = new Date(checkInTime);
-  regularCheckInTime.setHours(8, 0, 0); // Assuming regular check-in time is 8:00 AM
-  if (checkInTime > regularCheckInTime) {
-    const diffInMilliseconds = checkInTime - regularCheckInTime;
-    const lateArrival = new Date(diffInMilliseconds)
-    return lateArrival;
-  }
-  return '00:00:00';
-};
-
-const calculateEarlyDepartures = (checkOutTime) => {
-  const regularCheckOutTime = new Date(checkOutTime);
-  regularCheckOutTime.setHours(17, 0, 0); // Assuming regular check-out time is 5:00 PM
-  if (checkOutTime < regularCheckOutTime) {
-    const diffInMilliseconds = regularCheckOutTime - checkOutTime;
-    const earlyDeparture = new Date(diffInMilliseconds)
-    return earlyDeparture;
-  }
-  return '00:00:00';
-};
-
 exports.getAttendanceRecords = async (req, res) => {
-  const UserId = req.params.UserId;
-
   try {
-    // Query the database to get attendance records for the user
-    const attendanceRecords = await Attendance.findAll({ where: { UserId } });
+    // Fetch all attendance records from the database
+    const records = await Attendance.findAll();
 
-    res.status(200).json({ attendanceRecords });
-  } catch (err) {
-    console.error('Error fetching attendance records:', err);
-    res.status(500).json({ error: 'Something went wrong while fetching attendance records.' });
+    // Return the attendance records as JSON in the response
+    res.status(200).json(records);
+  } catch (error) {
+    console.error('Error fetching attendance records:', error);
+    res.status(500).json({ error: 'Something went wrong while fetching attendance records' });
   }
 };
