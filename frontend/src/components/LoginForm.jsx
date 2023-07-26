@@ -16,6 +16,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const redirectToDirectorDashboard = () => {
+    
     navigate('/director-dashboard');
   };
 

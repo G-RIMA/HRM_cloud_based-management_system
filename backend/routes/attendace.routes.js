@@ -16,7 +16,10 @@ module.exports = (app) => {
   router.post("/record-check-out", attendance.recordCheckOut);
 
   //get all
-  router.post("/records", attendance.getAttendanceRecords);
+  router.get("/", attendance.getAllRecords);
+  
+  //find for a user id
+  router.get("/:UserId", attendance.findAllForUserId);
 
   app.use("/api/attendance", router);
 };

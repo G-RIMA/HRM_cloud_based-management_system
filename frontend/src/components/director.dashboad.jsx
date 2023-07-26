@@ -1,10 +1,9 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from './api';
+import axios from 'axios';
 
-const DirectorDashboard = (props) => {
+const DirectorDashboard = () => {
   const history = useNavigate();
 
   const handleRecordCheckIn = async () => {
@@ -66,20 +65,37 @@ const DirectorDashboard = (props) => {
     localStorage.removeItem('token');
     history.push('/login');
   };
-  
-  useEffect(() => {
-    fetchAttendanceData();
-  }, []);
 
-  const fetchAttendanceData = async () => {
+
+  //fetch attendance records for the use
+  // Import useParams from react-router-dom
+  const API_BASE_URL = 'http://localhost:3000';
+  
+  
+   // Use the useParams hook to get the UserId from the URL
+  const [records, setRecords] = useState([]);
+  const [UserId] = useState([]);
+
+  useEffect(() => {
+    fetchRecords();
+
+    const interval = setInterval(() => {
+      fetchRecords();
+    }, 20000); // Update every 10 seconds
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(interval);
+  }, [UserId]); // Fetch records whenever UserId changes
+
+  const fetchRecords = async () => {
     try {
-      const response = await axios.get('/api/attendance/records');
+      const response = await axios.get(`${API_BASE_URL}/api/attendance/${UserId}`);
       setRecords(response.data);
     } catch (error) {
-      console.error('Error fetching attendance data:', error);
+      console.error("Error fetching records:", error);
     }
   };
-    
+  
 
   return (
     <div>
@@ -95,27 +111,35 @@ const DirectorDashboard = (props) => {
         <button onClick={handleLogout}>Logout</button>
       </div>
       <div>
+        <h2>Attendance Records</h2>
         <table>
-          <thead>
-            <tr>
-              <th>id</th>
-              <th>Check-In</th>
-              <th>Lunch Check-Out</th>
-              <th>Lunch Check-In</th>
-              <th>Check-Out</th>
-            </tr>
-          </thead>
-          <tbody>
-          {record.map((record) => (
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Check In</th>
+            <th>Lunch Check Out</th>
+            <th>Lunch Check In</th>
+            <th>Check Out</th>
+
+            {/* Add other columns as needed */}
+          </tr>
+        </thead>
+        <tbody>
+          {records.map((record) => (
             <tr key={record.id}>
+              
+              <td>{record.date}</td>
               <td>{record.check_in}</td>
-              <td>{record.check_out}</td>
               <td>{record.lunch_check_in}</td>
               <td>{record.lunch_check_out}</td>
+              <td>{record.check_out}</td>
+              {/* Add other cells with corresponding data */}
             </tr>
           ))}
-          </tbody>
-        </table>
+        </tbody>
+      </table>
+        
+
       </div>
       
     </div>

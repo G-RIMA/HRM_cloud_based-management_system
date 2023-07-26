@@ -8,6 +8,10 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
+    date: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+    },
     check_in: {
       type: DataTypes.TIME,
       allowNull: true, // Allow null to indicate not checked-in yet

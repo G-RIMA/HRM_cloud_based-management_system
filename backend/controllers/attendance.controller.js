@@ -19,6 +19,7 @@ exports.recordCheckIn = asyncHandler(async (req, res) => {
   try {
     // Extract the token from the request headers
     const token = req.headers.authorization.split(" ")[1];
+    const date = new date();
     // Assuming the token is in the format: "Bearer <token>"
 
     // Fetch the userId from the UserSession based on the token
@@ -151,15 +152,42 @@ exports.recordCheckOut = asyncHandler(async (req, res) => {
   }
 });
 
-exports.getAttendanceRecords = async (req, res) => {
+// Find a single Hr with a id
+exports.findAllForUserId = asyncHandler(async (req, res) => {
   try {
-    // Fetch all attendance records from the database
-    const records = await Attendance.findAll();
-
-    // Return the attendance records as JSON in the response
-    res.status(200).json(records);
+    const token = req.headers.authorization.split(" ")[1];
+    
+    // Fetch the userId from the UserSession based on the token
+    const UserId = await getUserIdFromToken(token);
+    if (!UserId) {
+      return res.status(401).json({ error: "Unauthorized. Invalid or expired token." });
+    }
+    
+    const data = await Attendance.findAll({ where: { UserId } });
+    if (data.length > 0) {
+      res.send(data);
+    } else {
+      res.status(404).send({
+        message: `No records found for UserId=${UserId}.`
+      });
+    }
   } catch (error) {
-    console.error('Error fetching attendance records:', error);
-    res.status(500).json({ error: 'Something went wrong while fetching attendance records' });
+    res.status(500).send({
+      message: "Error retrieving records: " + error.message
+    });
   }
+});
+
+exports.getAllRecords = async (req, res) => {
+  const UserId = req.query.UserId;
+  let condition = UserId ? { UserId: {[Op.like]: `%${UserId}%`}}: null;
+
+
+   Attendance.findAll({where: condition}).then (data => {
+    res.send(data);
+   }). catch (err => {
+    res.status(500).send({
+      message: err.message || "Some error Occured!"
+    });
+   });
 };

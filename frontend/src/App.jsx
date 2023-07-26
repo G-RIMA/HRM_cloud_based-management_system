@@ -4,6 +4,7 @@ import LoginForm from "./components/LoginForm";
 import DirectorDashboard from './components/director.dashboad';
 import HRDashboard from './components/hr.dahboard';
 import EmployeeDashboard from './components/employee.dahsboard';
+import RecordsDisplay from "./components/fetchData";
 
 import { BrowserRouter, Routes , Route } from 'react-router-dom';
 
