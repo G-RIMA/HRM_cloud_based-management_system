@@ -251,7 +251,7 @@ exports.findAllForUserId = asyncHandler(async (req, res) => {
   }
 });
 
-exports.getAllRecords = async (req, res) => {
+exports.getAllRecords = asyncHandler (async(req, res) => {
   const UserId = req.query.UserId;
   let condition = UserId ? { UserId: {[Op.like]: `%${UserId}%`}}: null;
 
@@ -263,4 +263,4 @@ exports.getAllRecords = async (req, res) => {
       message: err.message || "Some error Occured!"
     });
    });
-};
+});

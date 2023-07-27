@@ -105,6 +105,18 @@ const SignUpForm = () => {
                 <input type="text" name="wage" value={userData.wage} onChange={handleInputChange} />
               </label>
             </div>
+            <div>
+              <label>
+                Organisation_name:
+                <input type="text" name="org_name" value={userData.org_name} onChange={handleInputChange} />
+              </label>
+            </div>
+            <div>
+              <label>
+                Department:
+                <input type="text" name="dep_name" value={userData.dep_name} onChange={handleInputChange} />
+              </label>
+            </div>
           <div>
             <label>
               User Type:

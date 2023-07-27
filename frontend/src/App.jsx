@@ -4,9 +4,10 @@ import LoginForm from "./components/LoginForm";
 import DirectorDashboard from './components/director.dashboad';
 import HRDashboard from './components/hr.dahboard';
 import EmployeeDashboard from './components/employee.dahsboard';
-import RecordsDisplay from "./components/fetchData";
+import Attendance_Record from "./components/attendance_record";
 
 import { BrowserRouter, Routes , Route } from 'react-router-dom';
+
 
 export default function App() {
     return (
@@ -17,7 +18,7 @@ export default function App() {
                 <Route path="/director-dashboard" element={< DirectorDashboard />}></Route>
                 <Route path="/hr-dashboard" element={< HRDashboard />}></Route>
                 <Route path="/employee-dashboard" element={< EmployeeDashboard />}></Route>
-                
+                <Route path="/records" element={< Attendance_Record />}></Route>
 
             </Routes>
         </BrowserRouter>

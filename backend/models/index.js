@@ -28,16 +28,6 @@ db.department = require("./department.model.js")(sequelize, Sequelize);
 db.job_title = require("./job_title.model.js")(sequelize, Sequelize);
 db.userSession = require("./userSession.js")(sequelize, Sequelize);
 
-//connect roles to employees
-//db.roles.belongsToMany(db.employee, {
-  //through: "employee_roles"
-//});
-//db.employee.belongsToMany(db.roles, {
-  //through: "employee_roles"
-//});
-
-
-
 // employee relationships
 
 //employee belongs to one organisation 
@@ -47,6 +37,7 @@ db.employee.belongsTo(db.org, {
     type: Sequelize.INTEGER,
     allowNull: true,
   },
+  as:'Orgs',
 });
 
 // many employees can be in one org
@@ -248,10 +239,32 @@ db.attendance.belongsTo(db.userSession, {
   as: 'userSession',
 });
 
-db.attendance.belongsTo(db.employee, { foreignKey: 'employeeId' }); // Attendance belongs to an Employee
-db.attendance.belongsTo(db.attendance,{ foreignKey: 'attendanceId' } ); // Attendance belongs to a Director
-db.attendance.belongsTo(db.hr, { foreignKey: 'hrId' }); // Attendance belongs to an HR
-db.attendance.belongsTo(db.department, { foreignKey: 'departmentId' });
+db.attendance.belongsTo(db.hr, {
+  foreignKey: {
+  name: 'hrId',
+  type: Sequelize.INTEGER,
+  allowNull: false,
+},
+  as: 'HR',
+});
+
+db.attendance.belongsTo(db.employee, {
+  foreignKey: {
+  name: 'employeeId',
+  type: Sequelize.INTEGER,
+  allowNull: false,
+},
+  as: 'Employee',
+});
+
+db.attendance.belongsTo(db.director, {
+  foreignKey: {
+  name: 'directorId',
+  type: Sequelize.INTEGER,
+  allowNull: false,
+},
+  as: 'Director',
+});
 
 
 module.exports = db;
