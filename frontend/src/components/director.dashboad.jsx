@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from './api';
 import axios from 'axios';
 
@@ -19,7 +19,14 @@ const DirectorDashboard = () => {
       });
     alert('Check-in recorded successfully.');
   } catch (error) {
-    console.error(error);
+    if (error.response && error.response.data && error.response.data.error) {
+      const errorMessage = error.response.data.error;
+      console.error(errorMessage); // Log the error
+      alert(errorMessage); // Display the error message
+    } else {
+      console.error("Something went wrong while recording the check-in.");
+      alert("Something went wrong while recording the check-in.");
+    }
   }
   };
 
@@ -36,28 +43,63 @@ const DirectorDashboard = () => {
       });
     alert('Lunch Check-out recorded successfully.');
   } catch (error) {
-    console.error(error);
+    if (error.response && error.response.data && error.response.data.error) {
+      const errorMessage = error.response.data.error;
+      console.error(errorMessage); // Log the error
+      alert(errorMessage); // Display the error message
+    } else {
+      console.error("Something went wrong while recording the lunch check-out.");
+      alert("Something went wrong while recording the lunch check_out.");
+    }
   }
   };
 
   const handleRecordLunchCheckIn = async () => {
     try {
-      await api.post('/api/attendance/record-lunch-check-in');
-      alert('Lunch check-in recorded successfully.');
-    } catch (error) {
-      console.error(error);
-      alert('Error recording lunch check-in.');
+      await api.post('/api/attendance/record-lunch-check-in')
+      .then(response => {
+        // Process the response
+        return response.data;
+      })
+      .then(data => {
+        // Process the data
+        console.log(data);
+      });
+    alert('Lunch Check-in recorded successfully.');
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      const errorMessage = error.response.data.error;
+      console.error(errorMessage); // Log the error
+      alert(errorMessage); // Display the error message
+    } else {
+      console.error("Something went wrong while recording the lunch check-in.");
+      alert("Something went wrong while recording the lunch check_in.");
     }
+  }
   };
 
   const handleRecordCheckOut = async () => {
     try {
-      await api.post('/api/attendance/record-check-out');
-      alert('Check-out recorded successfully.');
-    } catch (error) {
-      console.error(error);
-      alert('Error recording check-out.');
+      await api.post('/api/attendance/record-check-out')
+      .then(response => {
+        // Process the response
+        return response.data;
+      })
+      .then(data => {
+        // Process the data
+        console.log(data);
+      });
+    alert('Check-out recorded successfully.');
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      const errorMessage = error.response.data.error;
+      console.error(errorMessage); // Log the error
+      alert(errorMessage); // Display the error message
+    } else {
+      console.error("Something went wrong while recording the check-out.");
+      alert("Something went wrong while recording the check_out.");
     }
+  }
   };
 
   const handleLogout = () => {

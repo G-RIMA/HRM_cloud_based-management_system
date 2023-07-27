@@ -19,7 +19,6 @@ exports.recordCheckIn = asyncHandler(async (req, res) => {
   try {
     // Extract the token from the request headers
     const token = req.headers.authorization.split(" ")[1];
-    const date = new date();
     // Assuming the token is in the format: "Bearer <token>"
 
     // Fetch the userId from the UserSession based on the token
@@ -31,9 +30,30 @@ exports.recordCheckIn = asyncHandler(async (req, res) => {
     // Save the check-in time in the database (you can modify the attendance model accordingly)
     const checkInTime = new Date();
 
+    const date = new Date();
+
+    // Check if there's an existing attendance record for the current date and user
+    const existingAttendance = await Attendance.findOne({
+      where: {
+        UserId,
+        date,
+      },
+    });
+
+    if (
+      existingAttendance &&
+      (existingAttendance.check_in ||
+      existingAttendance.lunch_check_in ||
+      existingAttendance.lunch_check_out ||
+      existingAttendance.check_out)
+    ) {
+      return res.status(400).json({ error: "Attendance already recorded for today." });
+    }
+
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
     const attendance = await Attendance.create({
         UserId,
+        date,
         check_in: checkInTime,
     });
 
@@ -60,10 +80,28 @@ exports.recordLunchCheckOut = asyncHandler(async (req, res) => {
 
     // Save the check-in time in the database (you can modify the attendance model accordingly
 
+    const date = new Date()
+
+     // Check if there's an existing attendance record for the current date and user
+     const existingAttendance = await Attendance.findOne({
+      where: {
+        UserId,
+        date,
+      },
+    });
+
+    if (
+      existingAttendance &&
+      (existingAttendance.lunch_check_out)
+    ) {
+      return res.status(400).json({ error: "Attendance already recorded for today." });
+    }
+
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
     const attendance = await Attendance.findOne({
       where: {
         UserId,
+        date,
       },
     });
 
@@ -96,11 +134,28 @@ exports.recordLunchCheckIn = asyncHandler(async (req, res) => {
 
     // Save the check-in time in the database (you can modify the attendance model accordingly)
     //const LunchCheckInTime = new Date();
+    const date = new Date();
+
+     // Check if there's an existing attendance record for the current date and user
+     const existingAttendance = await Attendance.findOne({
+      where: {
+        UserId,
+        date,
+      },
+    });
+
+    if (
+      existingAttendance &&
+      (existingAttendance.lunch_check_in)
+    ) {
+      return res.status(400).json({ error: "Attendance already recorded for today." });
+    }
 
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime"
     const attendance = await Attendance.findOne({
       where: {
         UserId,
+        date,
       },
     });
 
@@ -130,11 +185,29 @@ exports.recordCheckOut = asyncHandler(async (req, res) => {
 
     // Save the check-out time in the database (you can modify the attendance model accordingly)
     const checkOutTime = new Date();
+    const date = new Date();
+
+     // Check if there's an existing attendance record for the current date and user
+     const existingAttendance = await Attendance.findOne({
+      where: {
+        UserId,
+        date,
+      },
+    });
+
+    if (
+      existingAttendance &&
+      (existingAttendance.check_out)
+    )
+     {
+      return res.status(400).json({ error: "Attendance already recorded for today." });
+    }
 
     // Example: Assuming you have an "Attendance" model with fields "userId" and "checkInTime" and "checkOutTime"
     const attendance = await Attendance.findOne({
       where: {
         UserId,
+        date,
       },
     });
 
